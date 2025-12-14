@@ -1,0 +1,112 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { LocationSelector } from "@/components/search/LocationSelector";
+import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/ui/select";
+
+import { SourceTable } from "@/components/sources/SourceTable";
+import { useLocations, useSourceCategories, useSources, useSourceTags } from "./dataFetching";
+
+
+export default function SourcesPage() {
+    const [showFilters, setShowFilters] = useState<boolean>(false);
+
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+
+    const { data: tags, isLoading: tagsLoading } = useSourceTags();
+    const { data: sources, isLoading: sourcesLoading } = useSources();
+    const { data: categories, isLoading: categoriesLoading } = useSourceCategories();
+
+    const categoryOptions = useMemo(() => {
+        if (!categories) return [];
+
+        return [
+            { label: "Pasirinkite kategoriją", value: null },
+            ...categories.map(c => ({
+                label: c.name,
+                value: c.id.toString(), // Select values must be strings
+            })),
+        ];
+    }, [categories]);
+
+    return (
+        <main className="flex min-h-screen flex-col items-center p-24 bg-gray-200">
+
+            {/* Main Search Bar*/}
+            <div className="flex w-full flex-col gap-4 mb-8">
+
+                <Select aria-label="Kategorija" items={categoryOptions} onValueChange={setSelectedCategory}>
+                    <SelectTrigger size="lg">
+                        <SelectValue />
+                    </SelectTrigger>
+
+                    <SelectPopup alignItemWithTrigger={false}>
+                        {categoryOptions.map(({ label, value }) => (
+                            <SelectItem key={value} value={value}>
+                                {label}
+                            </SelectItem>
+                        ))}
+                    </SelectPopup>
+                </Select>
+
+                <div className="flex w-full max-w-1xl gap-4 mb-4">
+                    <Input
+                        aria-label="Teksto paieška"
+                        placeholder="Teksto paieška"
+                        size="lg"
+                        type="text"
+                    />
+
+                    <Button onClick={() => { setShowFilters(!showFilters) }}>
+                        {showFilters ? "Slėpti filtrus" : "Rodyti filtrus"}
+                    </Button>
+                </div>
+            </div>
+
+            {/* Additional Filters */}
+            <div className="w-full max-w-8xl mb-8">
+                <AnimatePresence initial={false}>
+                    {showFilters && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.2, ease: "easeInOut" }}
+                            style={{ overflow: "hidden" }}
+                        >
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mb-8 p-4 bg-white shadow-md rounded-md">
+                                {/* Filtravimas pagal vietovardžius */}
+                                <div>
+                                    <Label className="text-md mb-2">Filtruoti pagal vietovardžius:</Label>
+                                    <LocationSelector
+                                        selectedLocations={selectedLocations}
+                                        setSelectedLocations={setSelectedLocations}
+                                    />
+                                </div>
+
+                                {/* Antras filtras..... */}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            {/* Search Results */}
+            <div className="flex w-full max-w-1xl flex-col gap-4 bg-white p-4 rounded-md shadow-md">
+                {sourcesLoading || categoriesLoading || tagsLoading || sources == undefined ? (
+                    <div>Įkeliama...</div>
+                ) : (
+                    <SourceTable displayData={sources} filterSettings={
+                        { categoryId: selectedCategory, locationIds: selectedLocations.map(loc => Number(loc)) }
+                    } />
+                )}
+            </div>
+        </main>
+    );
+}

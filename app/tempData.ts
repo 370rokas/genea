@@ -28,20 +28,7 @@ export const vietovardziai: string[] = [
   "Bostonas"
 ]
 
-interface SourceData {
-    id: string;
-    
-    title: string;
-    description: string;
-    link: string;
-
-    category: string;
-    tags: string[];
-
-    locationNames: string[];
-}
-
-export const TEMP_DATA: SourceData[] = [
+export const TEMP_DATA: any[] = [
     {
         id: "1",
         title: "Istoriniai Vilniaus gatvių pavadinimai",
