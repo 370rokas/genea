@@ -12,6 +12,10 @@ export default function Home() {
         <Link href="/saltiniai" className="text-2xl font-bold underline">
           Eiti į šaltinių puslapį
         </Link>
+
+        <Link href="/saltiniai/naujas" className="text-2xl font-bold underline">
+          Pateikti naują šaltinį
+        </Link>
       </div>
     </main>
   );

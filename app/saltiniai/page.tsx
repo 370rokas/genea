@@ -10,7 +10,7 @@ import { LocationSelector } from "@/components/search/LocationSelector";
 import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/ui/select";
 
 import { SourceTable } from "@/components/sources/SourceTable";
-import { useLocations, useSourceCategories, useSources, useSourceTags } from "./dataFetching";
+import { useSourceCategories, useSources, useSourceTags } from "./dataFetching";
 
 
 export default function SourcesPage() {
