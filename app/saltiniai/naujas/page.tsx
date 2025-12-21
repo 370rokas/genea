@@ -56,7 +56,7 @@ export default function NewSourcePage() {
     }
 
     return (
-        <main className="flex min-h-screen flex-col items-center p-24 bg-gray-200">
+        <main className="flex min-h-screen flex-col items-center pt-12 px-24 bg-gray-200">
             <div className="flex w-full max-w-2xl flex-col gap-6">
                 <h1 className="text-2xl font-bold mb-2">Naujas šaltinis</h1>
 

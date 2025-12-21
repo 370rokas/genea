@@ -5,7 +5,5 @@ import { useSession } from "next-auth/react";
 export default function AdminHomepage() {
     const { data: session } = useSession();
 
-    console.log(session);
-
-    return <div>Sveiki: {session?.user?.name}</div>;
+    return <div>Sveiki: {session?.user?.username}</div>;
 }

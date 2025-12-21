@@ -25,10 +25,19 @@ export interface SourceDisplayData {
     locations: LocationData[];
 };
 
-export type Permission =
-    | "SUDO"
-    | "MANAGE_USERS"
-    | "MANAGE_SOURCES";
+export interface UpdateUserPayload {
+    username: string;
+    permissions?: Permission[];
+    password?: string;
+}
+
+export const PERMISSIONS = [
+    "SUDO",
+    "MANAGE_USERS",
+    "MANAGE_SOURCES",
+] as const;
+
+export type Permission = typeof PERMISSIONS[number];
 
 export interface UserData {
     id: number;
@@ -41,9 +50,6 @@ export function hasPermission(
     userPerms: Permission[],
     required?: Permission
 ) {
-    // TODO: Remove
-    return true;
-
     if (!required) return true;
     if (!userPerms || userPerms.length === 0) return false;
 

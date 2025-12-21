@@ -69,12 +69,14 @@ export default function AdminLayout({
         );
     }
 
-    console.log(session.user.permissions);
-
     return (
-        <div>
-            <AdminSidebar permissions={session.user.permissions as Permission[]} />
-            <main className="ml-64 p-6">{children}</main>
+        <div className="flex">
+            <AdminSidebar
+                permissions={session.user.permissions as Permission[]}
+                user={session.user.username}
+            />
+
+            <main className="flex-1 ml-64 p-6">{children}</main>
         </div>
     );
 }

@@ -36,7 +36,7 @@ export default function SourcesPage() {
     }, [categories]);
 
     return (
-        <main className="flex min-h-screen flex-col items-center p-24 bg-gray-200">
+        <main className="flex min-h-screen flex-col items-center pt-12 px-24 bg-gray-200">
 
             {/* Main Search Bar*/}
             <div className="flex w-full flex-col gap-4 mb-8">
