@@ -22,25 +22,32 @@ export async function POST(request: Request) {
 
     const client = await pool.connect();
 
-    if (data.password) {
-        const newHash = await bcrypt.hash(data.password, 10);
+    try {
+        if (data.password) {
+            const newHash = await bcrypt.hash(data.password, 10);
 
-        await client.query(
-            "UPDATE app_user SET password_hash = $1 WHERE username = $2",
-            [newHash, targetUsername]
-        );
+            await client.query(
+                "UPDATE app_user SET password_hash = $1 WHERE username = $2",
+                [newHash, targetUsername]
+            );
 
-        console.log(`[UPD] ${doerUsername} CHANGE PASS FOR ${targetUsername}`);
+            console.log(`[UPD] ${doerUsername} CHANGE PASS FOR ${targetUsername}`);
+        }
+
+        if (data.permissions && !data.permissions.includes("SUDO")) {
+            await client.query(
+                "UPDATE app_user SET permissions = $1 WHERE username = $2",
+                [data.permissions, targetUsername]
+            );
+
+            console.log(`[UPD] ${doerUsername} UPDATE PERMS FOR ${targetUsername}`);
+        }
+
+        return new Response(JSON.stringify({ message: "User updated successfully" }), { status: 200 });
+    } catch (error) {
+        console.error("Error updating user:", error);
+        return new Response(JSON.stringify({ message: "Internal Server Error" }), { status: 500 });
+    } finally {
+        client.release();
     }
-
-    if (data.permissions && !data.permissions.includes("SUDO")) {
-        await client.query(
-            "UPDATE app_user SET permissions = $1 WHERE username = $2",
-            [data.permissions, targetUsername]
-        );
-
-        console.log(`[UPD] ${doerUsername} UPDATE PERMS FOR ${targetUsername}`);
-    }
-
-    return new Response(JSON.stringify({ message: "User updated successfully" }), { status: 200 });
 }

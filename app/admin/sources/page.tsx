@@ -1,4 +1,5 @@
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/ui/tabs";
+import CategoryView from "./CategoryView";
 
 export default function SourcesAdminPage() {
     return (
@@ -24,7 +25,7 @@ export default function SourcesAdminPage() {
                 </TabsPanel>
 
                 <TabsPanel value="kategorijos" className="w-full p-6">
-                    <div>Kategorijos turinys</div>
+                    <CategoryView />
                 </TabsPanel>
 
                 <TabsPanel value="zymos" className="w-full p-6">

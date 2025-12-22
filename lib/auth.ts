@@ -14,14 +14,12 @@ export const authOptions: NextAuthOptions = {
             },
             async authorize(credentials) {
                 const { username, password } = credentials as { username: string; password: string }
-                const client = await pool.connect()
 
-                const res = await client.query(
+                const res = await pool.query(
                     "SELECT id, username, password_hash, permissions FROM app_user WHERE username = $1",
                     [username]
                 )
 
-                client.release()
                 const users = res.rows as {
                     id: number;
                     username: string;

@@ -16,8 +16,7 @@ export async function GET() {
         return new Response(JSON.stringify({ message: "Unauthorized" }), { status: 401 })
     }
 
-    const client = await pool.connect();
-    const res = await client.query(
+    const res = await pool.query(
         "SELECT id, username, permissions FROM app_user"
     );
 

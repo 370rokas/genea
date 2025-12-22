@@ -22,10 +22,9 @@ export async function POST(req: Request) {
     }
 
     const hash = await bcrypt.hash(password, 10);
-    const client = await pool.connect();
 
     try {
-        const result = await client.query(
+        const result = await pool.query(
             "INSERT INTO app_user (username, password_hash) VALUES ($1, $2) RETURNING id, username",
             [username, hash]
         );
@@ -39,7 +38,5 @@ export async function POST(req: Request) {
     } catch (error) {
         console.error("Error creating user:", error);
         return new Response("Internal Server Error", { status: 500 });
-    } finally {
-        client.release();
     }
 }

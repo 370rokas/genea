@@ -1,5 +1,5 @@
 import { LocationData, SourceCategory, SourceDisplayData, SourceTag } from '@/types';
-import { cacheTag, updateTag } from 'next/cache';
+import { cacheTag, revalidateTag } from 'next/cache';
 import pg from 'pg';
 
 const { Pool } = pg;
@@ -16,10 +16,8 @@ export const fetchSourceTags = async (): Promise<SourceTag[]> => {
     "use cache";
     cacheTag('source-tags');
 
-    const client = await pool.connect();
-
     try {
-        const res = await client.query('SELECT id, name FROM source_tag ORDER BY name ASC');
+        const res = await pool.query('SELECT id, name FROM source_tag ORDER BY name ASC');
         return res.rows.map(row => ({
             id: row.id,
             name: row.name,
@@ -27,8 +25,6 @@ export const fetchSourceTags = async (): Promise<SourceTag[]> => {
     } catch (error) {
         console.error('Error fetching source tags:', error);
         throw error;
-    } finally {
-        client.release();
     }
 };
 
@@ -36,10 +32,8 @@ export const fetchSourceCategories = async (): Promise<SourceCategory[]> => {
     "use cache";
     cacheTag('source-categories');
 
-    const client = await pool.connect();
-
     try {
-        const res = await client.query('SELECT id, name FROM source_category ORDER BY id ASC');
+        const res = await pool.query('SELECT id, name FROM source_category ORDER BY id ASC');
         return res.rows.map(row => ({
             id: row.id,
             name: row.name,
@@ -47,8 +41,6 @@ export const fetchSourceCategories = async (): Promise<SourceCategory[]> => {
     } catch (error) {
         console.error('Error fetching source categories:', error);
         throw error;
-    } finally {
-        client.release();
     }
 };
 
@@ -56,10 +48,8 @@ export const fetchLocations = async (): Promise<LocationData[]> => {
     "use cache";
     cacheTag('locations');
 
-    const client = await pool.connect();
-
     try {
-        const res = await client.query('SELECT id, name FROM location ORDER BY name ASC');
+        const res = await pool.query('SELECT id, name FROM location ORDER BY name ASC');
         return res.rows.map(row => ({
             id: row.id,
             name: row.name,
@@ -67,8 +57,6 @@ export const fetchLocations = async (): Promise<LocationData[]> => {
     } catch (error) {
         console.error('Error fetching locations:', error);
         throw error;
-    } finally {
-        client.release();
     }
 };
 
@@ -76,10 +64,8 @@ export const fetchDisplaySources = async (): Promise<SourceDisplayData[]> => {
     "use cache";
     cacheTag("sources");
 
-    const client = await pool.connect();
-
     try {
-        const { rows } = await client.query(`
+        const { rows } = await pool.query(`
       SELECT
         s.id,
         s.title,
@@ -127,21 +113,17 @@ export const fetchDisplaySources = async (): Promise<SourceDisplayData[]> => {
     } catch (error) {
         console.error("Error fetching display sources:", error);
         throw error;
-    } finally {
-        client.release();
     }
 };
 
 export const createCategory = async (name: string): Promise<SourceCategory> => {
-    const client = await pool.connect();
-
     try {
-        const res = await client.query(
+        const res = await pool.query(
             'INSERT INTO source_category (name) VALUES ($1) RETURNING id, name',
             [name]
         );
 
-        updateTag('source-categories');
+        revalidateTag('source-categories', 'max');
 
         return {
             id: res.rows[0].id,
@@ -150,21 +132,17 @@ export const createCategory = async (name: string): Promise<SourceCategory> => {
     } catch (error) {
         console.error('Error creating source category:', error);
         throw error;
-    } finally {
-        client.release();
     }
 };
 
 export const createTag = async (name: string): Promise<SourceTag> => {
-    const client = await pool.connect();
-
     try {
-        const res = await client.query(
+        const res = await pool.query(
             'INSERT INTO source_tag (name) VALUES ($1) RETURNING id, name',
             [name]
         );
 
-        updateTag('source-tags');
+        revalidateTag('source-tags', 'max');
 
         return {
             id: res.rows[0].id,
@@ -173,23 +151,17 @@ export const createTag = async (name: string): Promise<SourceTag> => {
     } catch (error) {
         console.error('Error creating source tag:', error);
         throw error;
-    } finally {
-        client.release();
     }
 };
 
 export const createSourceSubmission = async (title: string, description: string, link: string): Promise<void> => {
-    const client = await pool.connect();
-
     try {
-        await client.query(
+        await pool.query(
             'INSERT INTO source_submission (title, description, link) VALUES ($1, $2, $3)',
             [title, description, link]
         );
     } catch (error) {
         console.error('Error creating source submission:', error);
         throw error;
-    } finally {
-        client.release();
     }
 };
