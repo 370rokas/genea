@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-export function CreateCategoryDialog() {
+// TODO: Add support for location parent ID's
+
+export default function CreateLocationDialog() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
@@ -20,15 +22,15 @@ export function CreateCategoryDialog() {
         const name = formData.get("name")
 
         try {
-            const response = await fetch("/api/admin/sources/createCategory", {
+            const response = await fetch("/api/admin/locations/create", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ name }),
+                body: JSON.stringify({ name: name }),
             })
             if (!response.ok) {
-                throw new Error("Kategorijos kūrimas nepavyko")
+                throw new Error("Vietovės kūrimas nepavyko")
             }
             window.location.reload()
         } catch (err: any) {
@@ -40,17 +42,17 @@ export function CreateCategoryDialog() {
 
     return (
         <Dialog>
-            <DialogTrigger render={<Button>Sukurti kategoriją</Button>} />
+            <DialogTrigger render={<Button>Sukurti vietovę</Button>} />
 
             <DialogPopup className="sm:max-w-sm">
                 <Form className="contents" onSubmit={onSubmit}>
                     <DialogHeader>
-                        <DialogTitle>Sukurti kategoriją</DialogTitle>
+                        <DialogTitle>Sukurti vietovę</DialogTitle>
                     </DialogHeader>
 
                     <DialogPanel>
                         <Field name="name">
-                            <FieldLabel>Kategorijos pavadinimas</FieldLabel>
+                            <FieldLabel>Vietovės pavadinimas</FieldLabel>
                             <Input
                                 type="text"
                                 name="name"

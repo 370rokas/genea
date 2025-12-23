@@ -1,56 +1,67 @@
 "use client";
 
-import { Dialog, DialogClose, DialogPanel, DialogFooter, DialogHeader, DialogPopup, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { useState } from "react"
+import {
+    Dialog,
+    DialogClose,
+    DialogPanel,
+    DialogFooter,
+    DialogHeader,
+    DialogPopup,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { useState } from "react";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-export function CreateCategoryDialog() {
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
+export function CreateTagDialog() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        setLoading(true)
-        setError(null)
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
 
-        const formData = new FormData(e.currentTarget)
-        const name = formData.get("name")
+        const formData = new FormData(e.currentTarget);
+        const name = formData.get("name");
 
         try {
-            const response = await fetch("/api/admin/sources/createCategory", {
+            const response = await fetch("/api/admin/sources/createTag", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ name }),
-            })
+            });
+
             if (!response.ok) {
-                throw new Error("Kategorijos kūrimas nepavyko")
+                throw new Error("Žymos kūrimas nepavyko");
             }
-            window.location.reload()
+
+            window.location.reload();
         } catch (err: any) {
-            setError(err.message || "Įvyko klaida")
+            setError(err.message || "Įvyko klaida");
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     return (
         <Dialog>
-            <DialogTrigger render={<Button>Sukurti kategoriją</Button>} />
+            <DialogTrigger render={<Button>Sukurti žymą</Button>} />
 
             <DialogPopup className="sm:max-w-sm">
                 <Form className="contents" onSubmit={onSubmit}>
                     <DialogHeader>
-                        <DialogTitle>Sukurti kategoriją</DialogTitle>
+                        <DialogTitle>Sukurti žymą</DialogTitle>
                     </DialogHeader>
 
                     <DialogPanel>
                         <Field name="name">
-                            <FieldLabel>Kategorijos pavadinimas</FieldLabel>
+                            <FieldLabel>Žymos pavadinimas</FieldLabel>
                             <Input
                                 type="text"
                                 name="name"
@@ -67,7 +78,7 @@ export function CreateCategoryDialog() {
 
                     <DialogFooter>
                         <DialogClose render={<Button variant="ghost" />}>
-                            Atšaukti
+                            Cancel
                         </DialogClose>
                         <Button type="submit" disabled={loading}>
                             {loading ? "Kuriama..." : "Sukurti"}
@@ -76,5 +87,5 @@ export function CreateCategoryDialog() {
                 </Form>
             </DialogPopup>
         </Dialog>
-    )
+    );
 }

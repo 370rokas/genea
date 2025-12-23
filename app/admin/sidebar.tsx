@@ -6,7 +6,7 @@ import { hasPermission, Permission } from "@/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { BookOpenText, User2Icon } from "lucide-react";
+import { BookOpenText, Globe2Icon, User2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 type SidebarItem = {
@@ -32,6 +32,12 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
         href: "/admin/sources",
         permission: "MANAGE_SOURCES",
         icon: BookOpenText
+    },
+    {
+        label: "Vietovės",
+        href: '/admin/locations',
+        permission: "MANAGE_LOCATIONS",
+        icon: Globe2Icon
     }
 ];
 

@@ -49,10 +49,11 @@ export const fetchLocations = async (): Promise<LocationData[]> => {
     cacheTag('locations');
 
     try {
-        const res = await pool.query('SELECT id, name FROM location ORDER BY name ASC');
+        const res = await pool.query('SELECT id, name, path FROM location ORDER BY id ASC');
         return res.rows.map(row => ({
             id: row.id,
             name: row.name,
+            path: row.path
         }));
     } catch (error) {
         console.error('Error fetching locations:', error);
@@ -165,3 +166,17 @@ export const createSourceSubmission = async (title: string, description: string,
         throw error;
     }
 };
+
+export const createLocation = async (name: string, parentId?: number): Promise<void> => {
+    try {
+        await pool.query(
+            'INSERT INTO location (name, parent_id) VALUES ($1, $2)',
+            [name, parentId || null]
+        );
+
+        revalidateTag("locations", "max");
+    } catch (error) {
+        console.log('Error creating location: ', error);
+        throw error;
+    }
+}

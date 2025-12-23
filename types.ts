@@ -11,6 +11,7 @@ export interface SourceCategory {
 export interface LocationData {
     id: number;
     name: string;
+    path: string;
 }
 
 export interface SourceDisplayData {
@@ -25,6 +26,24 @@ export interface SourceDisplayData {
     locations: LocationData[];
 };
 
+export interface ApproveSourceBody {
+    proposal_id: number;
+
+    data: {
+        title: string;
+        description: string;
+        link: string;
+
+        category_id: number | null;
+        tag_ids: number[];
+        location_ids: number[];
+    };
+};
+
+export interface RemoveSourceBody {
+    proposal_id: number;
+}
+
 export interface UpdateUserPayload {
     username: string;
     permissions?: Permission[];
@@ -35,6 +54,7 @@ export const PERMISSIONS = [
     "SUDO",
     "MANAGE_USERS",
     "MANAGE_SOURCES",
+    "MANAGE_LOCATIONS"
 ] as const;
 
 export type Permission = typeof PERMISSIONS[number];
@@ -44,6 +64,15 @@ export interface UserData {
 
     username: string;
     permissions: Permission[];
+}
+
+export interface SourceProposal {
+    id: number;
+
+    title: string;
+    description: string;
+    link: string;
+    submitted_at: string;
 }
 
 export function hasPermission(

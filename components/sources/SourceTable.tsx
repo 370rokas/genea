@@ -6,6 +6,7 @@ interface FilterSettings {
     categoryId: string | null;
     tagsIds?: number[] | null;
     locationIds?: number[] | null;
+    text?: string;
 }
 
 interface SourceTableProps {
@@ -37,16 +38,16 @@ export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
                 return false;
             }
 
-            // Must contain all tagIds
+            // Tags filter: must contain any of the selected tag IDs
             if (filterSettings.tagsIds && filterSettings.tagsIds.length > 0) {
                 const itemTagIds = item.tags.map(tag => tag.id);
-                const hasAllTags = filterSettings.tagsIds.every(tagId => itemTagIds.includes(tagId));
-                if (!hasAllTags) {
+                const hasMatchingTag = filterSettings.tagsIds.some(tagId => itemTagIds.includes(tagId));
+                if (!hasMatchingTag) {
                     return false;
                 }
             }
 
-            // Must contain one or more locationIds
+            // Location filter
             if (filterSettings.locationIds && filterSettings.locationIds.length > 0) {
                 const itemLocationIds = item.locations.map(loc => loc.id);
                 const hasLocation = filterSettings.locationIds.some(locId => itemLocationIds.includes(locId));
@@ -54,10 +55,22 @@ export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
                     return false;
                 }
             }
+
+            // Text filter
+            if (filterSettings.text && filterSettings.text.trim() !== "") {
+                const lowerText = filterSettings.text.toLowerCase();
+                if (
+                    !item.title.toLowerCase().includes(lowerText) &&
+                    !item.description.toLowerCase().includes(lowerText)
+                ) {
+                    return false;
+                }
+            }
         }
 
         return true;
     }
+
 
     return (
         <Table className="w-full table-fixed">

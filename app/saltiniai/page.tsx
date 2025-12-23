@@ -1,16 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { LocationSelector } from "@/components/search/LocationSelector";
-import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/ui/select";
 
 import { SourceTable } from "@/components/sources/SourceTable";
 import { useSourceCategories, useSources, useSourceTags } from "./dataFetching";
+import CategorySelector from "@/components/admin/categorySelector";
+import TagSelector from "@/components/search/tagSelector";
 
 
 export default function SourcesPage() {
@@ -18,42 +19,28 @@ export default function SourcesPage() {
 
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+    const [selectedTags, setSelectedTags] = useState<number[]>([]);
+    const [filterText, setFilterText] = useState<string>("");
 
     const { data: tags, isLoading: tagsLoading } = useSourceTags();
     const { data: sources, isLoading: sourcesLoading } = useSources();
     const { data: categories, isLoading: categoriesLoading } = useSourceCategories();
-
-    const categoryOptions = useMemo(() => {
-        if (!categories) return [];
-
-        return [
-            { label: "Pasirinkite kategoriją", value: null },
-            ...categories.map(c => ({
-                label: c.name,
-                value: c.id.toString(), // Select values must be strings
-            })),
-        ];
-    }, [categories]);
-
     return (
         <main className="flex min-h-screen flex-col items-center pt-12 px-24 bg-gray-200">
 
             {/* Main Search Bar*/}
             <div className="flex w-full flex-col gap-4 mb-8">
 
-                <Select aria-label="Kategorija" items={categoryOptions} onValueChange={setSelectedCategory}>
-                    <SelectTrigger size="lg">
-                        <SelectValue />
-                    </SelectTrigger>
-
-                    <SelectPopup alignItemWithTrigger={false}>
-                        {categoryOptions.map(({ label, value }) => (
-                            <SelectItem key={value} value={value}>
-                                {label}
-                            </SelectItem>
-                        ))}
-                    </SelectPopup>
-                </Select>
+                <CategorySelector
+                    selectedCategory={selectedCategory ? Number(selectedCategory) : null}
+                    setSelectedCategory={(catId: number | null) => {
+                        if (catId === null) {
+                            setSelectedCategory(null);
+                        } else {
+                            setSelectedCategory(String(catId));
+                        }
+                    }}
+                />
 
                 <div className="flex w-full max-w-1xl gap-4 mb-4">
                     <Input
@@ -61,6 +48,7 @@ export default function SourcesPage() {
                         placeholder="Teksto paieška"
                         size="lg"
                         type="text"
+                        onChange={(text) => setFilterText(text.target.value)}
                     />
 
                     <Button onClick={() => { setShowFilters(!showFilters) }}>
@@ -90,7 +78,14 @@ export default function SourcesPage() {
                                     />
                                 </div>
 
-                                {/* Antras filtras..... */}
+                                {/* Žymų filtras */}
+                                <div>
+                                    <Label className="text-md mb-2">Filtruoti pagal žymas:</Label>
+                                    <TagSelector
+                                        selectedTags={selectedTags}
+                                        setSelectedTags={setSelectedTags}
+                                    />
+                                </div>
                             </div>
                         </motion.div>
                     )}
@@ -103,8 +98,12 @@ export default function SourcesPage() {
                     <div>Įkeliama...</div>
                 ) : (
                     <SourceTable displayData={sources} filterSettings={
-                        { categoryId: selectedCategory, locationIds: selectedLocations.map(loc => Number(loc)) }
-                    } />
+                        {
+                            categoryId: selectedCategory,
+                            locationIds: selectedLocations.map(loc => Number(loc)),
+                            tagsIds: selectedTags,
+                            text: filterText,
+                        }} />
                 )}
             </div>
         </main>
