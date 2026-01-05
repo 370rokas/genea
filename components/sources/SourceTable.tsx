@@ -1,6 +1,12 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { SourceDisplayData } from "@/types";
 import { useState } from "react";
+import { Button } from "../ui/button";
+import { MessageCircleIcon } from "lucide-react";
+import { Form } from "../ui/form";
+import { Textarea } from "../ui/textarea";
+import { Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogPanel, DialogPopup, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Field, FieldLabel } from "../ui/field";
 
 interface FilterSettings {
     categoryId: string | null;
@@ -30,6 +36,9 @@ function ExpandableCell({
 
 export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
     const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
+    const [submittingForm, setSubmittingForm] = useState<boolean>(false);
+
+
 
     function shouldDisplayRow(item: SourceDisplayData): boolean {
         if (filterSettings) {
@@ -77,10 +86,11 @@ export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
             <TableHeader>
                 <TableRow>
                     <TableHead className="w-[25%]">Pavadinimas</TableHead>
-                    <TableHead className="w-[45%]">Aprašymas</TableHead>
+                    <TableHead className="w-[40%]">Aprašymas</TableHead>
                     <TableHead className="w-[10%] hidden xl:table-cell">Vietovardžiai</TableHead>
                     <TableHead className="w-[10%] hidden xl:table-cell">Žymos</TableHead>
                     <TableHead className="w-[10%]">Nuoroda</TableHead>
+                    <TableHead className="w-[5%]"></TableHead>
                 </TableRow>
             </TableHeader>
 
@@ -148,6 +158,38 @@ export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
                                 >
                                     Atidaryti šaltinį
                                 </a>
+                            </TableCell>
+
+                            <TableCell className="overflow-hidden text-center">
+                                <Dialog>
+                                    <DialogTrigger render={<Button variant="destructive" size="icon-sm">
+                                        <MessageCircleIcon />
+                                    </Button>} />
+
+                                    <DialogPopup>
+                                        <Form>
+                                            <DialogHeader>
+                                                <DialogTitle>Pranešti apie šaltinį</DialogTitle>
+                                                <DialogDescription>Pasirinktas šaltinis: {item.title}</DialogDescription>
+                                            </DialogHeader>
+                                            <DialogPanel>
+                                                <Field name="pranesimas">
+                                                    <FieldLabel>Pranešimas</FieldLabel>
+                                                    <Textarea disabled={submittingForm} />
+                                                </Field>
+
+
+                                            </DialogPanel>
+                                            <DialogFooter>
+                                                <Button disabled={submittingForm} type="submit">
+                                                    Pranešti
+                                                </Button>
+
+                                                <DialogClose render={<Button variant="ghost" />}>Atšaukti</DialogClose>
+                                            </DialogFooter>
+                                        </Form>
+                                    </DialogPopup>
+                                </Dialog>
                             </TableCell>
                         </TableRow>
                     );
