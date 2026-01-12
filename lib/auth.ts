@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { pool } from "@/lib/db";
 import { Permission } from "@/types";
 import bcrypt from "bcryptjs";
+import { EventType, logEvent } from "./eventLog";
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -39,8 +40,15 @@ export const authOptions: NextAuthOptions = {
                     return null;
                 }
 
+                logEvent({
+                    type: EventType.LOGIN,
+                    data: null,
+                    userId: user.id,
+                    sourceId: null
+                })
+
                 return {
-                    id: user.id.toString(),
+                    id: user.id as number,
                     username: user.username,
                     permissions: user.permissions
                 }
@@ -50,7 +58,7 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
-                token.id = user.id
+                token.id = user.id as number
                 token.username = user.username
                 token.permissions = user.permissions
             }
@@ -58,6 +66,7 @@ export const authOptions: NextAuthOptions = {
         },
         async session({ session, token }) {
             if (token) {
+                session.user.id = token.id
                 session.user.username = token.username
                 session.user.permissions = token.permissions
             }

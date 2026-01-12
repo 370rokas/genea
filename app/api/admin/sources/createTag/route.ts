@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { createTag } from "@/lib/db";
+import { EventType, logEvent } from "@/lib/eventLog";
 import { hasPermission } from "@/types";
 import { getServerSession } from "next-auth/next";
 
@@ -20,6 +21,13 @@ export async function POST(request: Request) {
 
     try {
         const tag = await createTag(name.trim());
+
+        logEvent({
+            type: EventType.CREATE_SOURCE_TAG,
+            data: { tagId: tag.id },
+            userId: session.user.id,
+            sourceId: null,
+        })
 
         return new Response(
             JSON.stringify(tag),

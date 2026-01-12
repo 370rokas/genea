@@ -1,6 +1,7 @@
 import { LocationData, SourceCategory, SourceDisplayData, SourceTag } from '@/types';
 import { cacheTag, revalidateTag } from 'next/cache';
 import pg from 'pg';
+import { createNotif } from '@/lib/notifs';
 
 const { Pool } = pg;
 
@@ -161,20 +162,29 @@ export const createSourceSubmission = async (title: string, description: string,
             'INSERT INTO source_submission (title, description, link) VALUES ($1, $2, $3)',
             [title, description, link]
         );
+
+        // Create a notification for the new source submission
+        createNotif(`New source submission: "${title}"`, null, null).then(() => {
+            return;
+        }).catch((error) => {
+            console.error('Error creating notification for source submission:', error);
+        });
     } catch (error) {
         console.error('Error creating source submission:', error);
         throw error;
     }
 };
 
-export const createLocation = async (name: string, parentId?: number): Promise<void> => {
+export const createLocation = async (name: string, parentId?: number): Promise<{ id: number, name: string }> => {
     try {
-        await pool.query(
-            'INSERT INTO location (name, parent_id) VALUES ($1, $2)',
+        const id = await pool.query(
+            'INSERT INTO location (name, parent_id) VALUES ($1, $2) RETURNING id',
             [name, parentId || null]
         );
 
         revalidateTag("locations", "max");
+
+        return { id: id.rows[0].id, name };
     } catch (error) {
         console.log('Error creating location: ', error);
         throw error;

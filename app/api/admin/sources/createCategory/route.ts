@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { createCategory } from "@/lib/db";
+import { EventType, logEvent } from "@/lib/eventLog";
 import { hasPermission } from "@/types";
 import { getServerSession } from "next-auth/next";
 
@@ -20,6 +21,13 @@ export async function POST(request: Request) {
 
     try {
         const category = await createCategory(name.trim());
+
+        logEvent({
+            type: EventType.CREATE_SOURCE_CATEGORY,
+            data: { categoryId: category.id },
+            userId: session.user.id,
+            sourceId: null
+        });
 
         return new Response(
             JSON.stringify(category),

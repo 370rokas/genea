@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { pool } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { hasPermission } from "@/types";
+import { EventType, logEvent } from "@/lib/eventLog";
 
 export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
@@ -30,6 +31,13 @@ export async function POST(req: Request) {
         );
 
         const newUser = result.rows[0];
+
+        logEvent({
+            type: EventType.CREATE_USER,
+            data: { newId: newUser.id, newUsername: newUser.username },
+            userId: session.user.id,
+            sourceId: null,
+        });
 
         return new Response(JSON.stringify(newUser), {
             status: 201,

@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { createLocation } from "@/lib/db";
+import { EventType, logEvent } from "@/lib/eventLog";
 import { hasPermission } from "@/types";
 import { getServerSession } from "next-auth/next";
 
@@ -26,6 +27,15 @@ export async function POST(request: Request) {
 
     try {
         const location = await createLocation(name, parentId);
+
+        logEvent(
+            {
+                type: EventType.CREATE_LOCATION,
+                data: { locationId: location.id },
+                userId: session.user.id,
+                sourceId: null
+            }
+        );
 
         return new Response(
             JSON.stringify(location),

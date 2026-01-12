@@ -4,12 +4,14 @@ import NextAuth from "next-auth"
 declare module "next-auth" {
     interface Session {
         user: {
+            id: number;
             username: string;
             permissions: Permission[];
         }
     }
 
     interface User {
+        id: number;
         username: string;
         permissions: Permission[]
     }
@@ -17,7 +19,7 @@ declare module "next-auth" {
 
 declare module "next-auth/jwt" {
     interface JWT {
-        id: string
+        id: number
         username: string
         permissions: Permission[]
     }

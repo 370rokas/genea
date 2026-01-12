@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { pool } from "@/lib/db";
+import { EventType, logEvent } from "@/lib/eventLog";
 import { hasPermission, RemoveSourceBody } from "@/types";
 import { getServerSession } from "next-auth";
 
@@ -22,7 +23,12 @@ export async function POST(request: Request) {
         [proposal_id]
     );
 
-    console.log(`[DEL_PROPOSAL] ${proposal_id} removed by ${session.user.username}`);
+    logEvent({
+        type: EventType.REMOVE_SOURCE_PROPOSAL,
+        data: { proposalId: proposal_id },
+        userId: session.user.id,
+        sourceId: null,
+    })
 
     return new Response("Proposal removed", { status: 200 });
 }

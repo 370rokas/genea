@@ -34,6 +34,36 @@ CREATE TABLE IF NOT EXISTS source(
     search_vector tsvector
 );
 
+ALTER TABLE source
+    ADD COLUMN IF NOT EXISTS title_en text;
+
+ALTER TABLE source
+    ADD COLUMN IF NOT EXISTS description_en text;
+
+CREATE TABLE IF NOT EXISTS notification(
+    id bigserial PRIMARY KEY,
+    message text NOT NULL,
+    reply_to text,
+    related_source_id bigint REFERENCES source(id) ON DELETE SET NULL,
+    created_at timestamptz NOT NULL DEFAULT NOW(),
+    handled boolean NOT NULL DEFAULT FALSE,
+    last_pushed_at timestamptz
+);
+
+CREATE TABLE IF NOT EXISTS notification_recipient(
+    id bigserial PRIMARY KEY,
+    email varchar(255) NOT NULL UNIQUE,
+    enabled boolean NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS event_log(
+    event_type varchar(100) NOT NULL,
+    event_data jsonb NOT NULL DEFAULT '{}',
+    event_time timestamptz NOT NULL DEFAULT NOW(),
+    event_related_user bigint REFERENCES app_user(id) ON DELETE SET NULL,
+    event_related_source bigint REFERENCES source(id) ON DELETE SET NULL
+);
+
 CREATE TABLE IF NOT EXISTS source_tags(
     source_id bigint REFERENCES source(id) ON DELETE CASCADE,
     tag_id bigint REFERENCES source_tag(id) ON DELETE CASCADE,

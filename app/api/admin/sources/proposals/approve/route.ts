@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { pool } from "@/lib/db";
+import { EventType, logEvent } from "@/lib/eventLog";
 import { ApproveSourceBody, hasPermission } from "@/types";
 import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
@@ -57,6 +58,13 @@ export async function POST(request: Request) {
         DELETE FROM source_submission
         WHERE id = $1
     `, [body.proposal_id]);
+
+    logEvent({
+        type: EventType.APPROVE_SOURCE_PROPOSAL,
+        data: { proposalId: body.proposal_id },
+        userId: session.user.id,
+        sourceId
+    })
 
     return new Response(JSON.stringify({ message: "Source approved", id: sourceId }), { status: 200 });
 }

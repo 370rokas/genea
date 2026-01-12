@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { pool } from "@/lib/db";
 import bcrypt from "bcryptjs";
+import { EventType, logEvent } from "@/lib/eventLog";
 
 export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
@@ -21,6 +22,7 @@ export async function POST(request: Request) {
     const doerUsername = session.user.username;
 
     const client = await pool.connect();
+    const changes: string[] = [];
 
     try {
         if (data.password) {
@@ -32,6 +34,7 @@ export async function POST(request: Request) {
             );
 
             console.log(`[UPD] ${doerUsername} CHANGE PASS FOR ${targetUsername}`);
+            changes.push("password");
         }
 
         if (data.permissions && !data.permissions.includes("SUDO")) {
@@ -41,6 +44,7 @@ export async function POST(request: Request) {
             );
 
             console.log(`[UPD] ${doerUsername} UPDATE PERMS FOR ${targetUsername}`);
+            changes.push("permissions");
         }
 
         return new Response(JSON.stringify({ message: "User updated successfully" }), { status: 200 });
@@ -48,6 +52,15 @@ export async function POST(request: Request) {
         console.error("Error updating user:", error);
         return new Response(JSON.stringify({ message: "Internal Server Error" }), { status: 500 });
     } finally {
+        if (changes.length > 0) {
+            logEvent({
+                type: EventType.UPDATE_USER,
+                data: { target: targetUsername, changes },
+                userId: session.user.id,
+                sourceId: null,
+            });
+        }
+
         client.release();
     }
 }
