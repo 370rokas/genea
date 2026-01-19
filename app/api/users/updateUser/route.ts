@@ -1,9 +1,10 @@
 import { hasPermission, UpdateUserPayload } from "@/types";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/lib/security/auth";
 import { pool } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { EventType, logEvent } from "@/lib/eventLog";
+import logger from "@/lib/logger";
 
 export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
@@ -33,7 +34,7 @@ export async function POST(request: Request) {
                 [newHash, targetUsername]
             );
 
-            console.log(`[UPD] ${doerUsername} CHANGE PASS FOR ${targetUsername}`);
+            logger.info(`[UPD] ${doerUsername} CHANGE PASS FOR ${targetUsername}`);
             changes.push("password");
         }
 
@@ -43,13 +44,13 @@ export async function POST(request: Request) {
                 [data.permissions, targetUsername]
             );
 
-            console.log(`[UPD] ${doerUsername} UPDATE PERMS FOR ${targetUsername}`);
+            logger.info(`[UPD] ${doerUsername} UPDATE PERMS FOR ${targetUsername}`);
             changes.push("permissions");
         }
 
         return new Response(JSON.stringify({ message: "User updated successfully" }), { status: 200 });
     } catch (error) {
-        console.error("Error updating user:", error);
+        logger.error("Error updating user:", error);
         return new Response(JSON.stringify({ message: "Internal Server Error" }), { status: 500 });
     } finally {
         if (changes.length > 0) {

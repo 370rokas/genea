@@ -3,10 +3,8 @@ import { SourceDisplayData } from "@/types";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { MessageCircleIcon } from "lucide-react";
-import { Form } from "../ui/form";
-import { Textarea } from "../ui/textarea";
-import { Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogPanel, DialogPopup, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { Field, FieldLabel } from "../ui/field";
+import { Dialog, DialogPopup, DialogTrigger } from "../ui/dialog";
+import SourceReportForm from "./SourceReportForm";
 
 interface FilterSettings {
     categoryId: string | null;
@@ -36,9 +34,6 @@ function ExpandableCell({
 
 export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
     const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
-    const [submittingForm, setSubmittingForm] = useState<boolean>(false);
-
-
 
     function shouldDisplayRow(item: SourceDisplayData): boolean {
         if (filterSettings) {
@@ -50,9 +45,13 @@ export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
             // Tags filter: must contain any of the selected tag IDs
             if (filterSettings.tagsIds && filterSettings.tagsIds.length > 0) {
                 const itemTagIds = item.tags.map(tag => tag.id);
-                const hasMatchingTag = filterSettings.tagsIds.some(tagId => itemTagIds.includes(tagId));
-                if (!hasMatchingTag) {
+                const hasTag = filterSettings.tagsIds.some(tagId => itemTagIds.includes(tagId));
+                if (!hasTag) {
+                    console.log("Item tags:", itemTagIds);
+                    console.log("Filter tags:", filterSettings.tagsIds);
                     return false;
+                } else {
+                    console.log("Item", item.id, "passed tag filter");
                 }
             }
 
@@ -79,7 +78,6 @@ export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
 
         return true;
     }
-
 
     return (
         <Table className="w-full table-fixed">
@@ -167,27 +165,7 @@ export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
                                     </Button>} />
 
                                     <DialogPopup>
-                                        <Form>
-                                            <DialogHeader>
-                                                <DialogTitle>Pranešti apie šaltinį</DialogTitle>
-                                                <DialogDescription>Pasirinktas šaltinis: {item.title}</DialogDescription>
-                                            </DialogHeader>
-                                            <DialogPanel>
-                                                <Field name="pranesimas">
-                                                    <FieldLabel>Pranešimas</FieldLabel>
-                                                    <Textarea disabled={submittingForm} />
-                                                </Field>
-
-
-                                            </DialogPanel>
-                                            <DialogFooter>
-                                                <Button disabled={submittingForm} type="submit">
-                                                    Pranešti
-                                                </Button>
-
-                                                <DialogClose render={<Button variant="ghost" />}>Atšaukti</DialogClose>
-                                            </DialogFooter>
-                                        </Form>
+                                        <SourceReportForm item={item} />
                                     </DialogPopup>
                                 </Dialog>
                             </TableCell>

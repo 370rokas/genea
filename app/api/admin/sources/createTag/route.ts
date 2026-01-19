@@ -1,6 +1,7 @@
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/lib/security/auth";
 import { createTag } from "@/lib/db";
 import { EventType, logEvent } from "@/lib/eventLog";
+import logger from "@/lib/logger";
 import { hasPermission } from "@/types";
 import { getServerSession } from "next-auth/next";
 
@@ -44,7 +45,7 @@ export async function POST(request: Request) {
             }
         }
 
-        console.error("Error creating tag:", error);
+        logger.error("Error creating tag:", error);
         return new Response("Internal Server Error", { status: 500 });
     }
 }

@@ -1,6 +1,7 @@
 
 import { pool } from "@/lib/db";
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+import logger from "@/lib/logger";
 
 const mailerSend: MailerSend | null = process.env.MAILERSEND_API_KEY ?
     new MailerSend({ apiKey: process.env.MAILERSEND_API_KEY }) : null;
@@ -10,19 +11,15 @@ const NOTIFS_PAGE_SIZE = 25;
 export interface Notification {
     id: number;
     message: string;
-    handled: boolean;
-
-    reply_to: string | null;
-    related_source_id: number | null;
 
     created_at: string;
     last_pushed_at: string;
 };
 
-export async function createNotif(message: string, reply_to: string | null = null, related_source_id: number | null = null): Promise<Notification> {
+export async function createNotif(message: string): Promise<Notification> {
     const res = await pool.query(
-        "INSERT INTO notification (message, reply_to, related_source_id) VALUES ($1, $2, $3) RETURNING id, message, handled, reply_to, related_source_id, created_at, last_pushed_at",
-        [message, reply_to, related_source_id]
+        "INSERT INTO notification (message) VALUES ($1) RETURNING id, message, created_at, last_pushed_at",
+        [message]
     );
 
     return res.rows[0] as Notification;
@@ -30,17 +27,17 @@ export async function createNotif(message: string, reply_to: string | null = nul
 
 export async function pushNotifTask() {
     if (!mailerSend) {
-        console.warn("MailerSend API key not configured. Skipping notification push.");
+        logger.warn("MailerSend API key not configured. Skipping notification push.");
         return;
     }
 
     // Select unpushed & unhandled notifications
     const notifs: Notification[] = (await pool.query(
-        "SELECT id, message, handled, reply_to, related_source_id, created_at, last_pushed_at FROM notification WHERE last_pushed_at IS NULL AND handled = FALSE"
+        "SELECT id, message, created_at, last_pushed_at FROM notification WHERE last_pushed_at IS NULL"
     )).rows;
 
     if (notifs.length === 0) {
-        console.log("No new notifications to push.");
+        logger.info("No new notifications to push.");
         return;
     }
 
@@ -50,7 +47,7 @@ export async function pushNotifTask() {
     )).rows;
 
     if (recipients.length === 0) {
-        console.log("No notification recipients configured. Skipping push.");
+        logger.info("No notification recipients configured. Skipping push.");
         return;
     }
 
@@ -79,9 +76,9 @@ export async function pushNotifTask() {
             [notifIds]
         );
 
-        console.log(`Pushed ${notifs.length} notifications to ${recipients.length} recipients.`);
+        logger.info(`Pushed ${notifs.length} notifications to ${recipients.length} recipients.`);
     } catch (error) {
-        console.error("Error sending notification emails:", error);
+        logger.error("Error sending notification emails:", error);
     }
 
     return;

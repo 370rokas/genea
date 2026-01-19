@@ -1,4 +1,6 @@
 import { createSourceSubmission } from "@/lib/db";
+import logger from "@/lib/logger";
+import { checkRateLimit, RateLimitEndpoint, returnLimitedResponse } from "@/lib/security/ratelimit";
 
 interface SubmitSourceResponse {
     ok: boolean;
@@ -10,12 +12,18 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+    const ip = request.headers.get("x-forwarded-for") || request.headers.get("host") || "unknown";
+    const shouldRateLimit = checkRateLimit(ip, RateLimitEndpoint.SUBMIT_SOURCE_PROPOSAL);
+
+    if (!shouldRateLimit) {
+        return returnLimitedResponse();
+    }
 
     try {
         const body = await request.json();
         const { title, description, link } = body;
 
-        console.log(`IP ${request.headers.get("x-forwarded-for") || request.headers.get("host")} source submit: title (${title}), link (${link}), description (${description})`);
+        logger.info(`[SOURCE_SUBMIT] New source submission: IP ${request.headers.get("x-forwarded-for") || request.headers.get("host")}, title (${title}), link (${link}), description (${description})`);
 
         if (!title || !link) {
             return new Response(JSON.stringify({

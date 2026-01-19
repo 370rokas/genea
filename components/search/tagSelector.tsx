@@ -26,6 +26,7 @@ export default function TagSelector({
     setSelectedTags,
 }: TagSelectorProps) {
     const { data, isLoading, isError } = useSourceTags();
+    console.log("TagSelector fetched tags:", data);
     const [items, setItems] = useState<{ label: string; value: number }[]>([]);
 
     useEffect(() => {

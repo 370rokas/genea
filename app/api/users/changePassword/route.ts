@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { pool } from "@/lib/db";
 import bcrypt from "bcryptjs";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/lib/security/auth";
 import { EventType, logEvent } from "@/lib/eventLog";
 
 

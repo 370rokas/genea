@@ -14,7 +14,6 @@ export function LocationsTable({ locationData }: LocationsTableProps) {
                 <TableRow>
                     <TableHead className="w-[5%]">ID</TableHead>
                     <TableHead className="w-[35%]">Pavadinimas</TableHead>
-                    <TableHead className="w-[60%]">URI</TableHead>
                 </TableRow>
             </TableHeader>
 
@@ -26,7 +25,6 @@ export function LocationsTable({ locationData }: LocationsTableProps) {
                     >
                         <TableCell>{loc.id}</TableCell>
                         <TableCell>{loc.name}</TableCell>
-                        <TableCell>{loc.path}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>

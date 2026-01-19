@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs"
 import { pool } from "@/lib/db"
+import logger from "@/lib/logger"
 
 async function createUser(username: string, password: string) {
     const client = await pool.connect()
@@ -10,9 +11,9 @@ async function createUser(username: string, password: string) {
             "INSERT INTO app_user (username, password_hash, permissions) VALUES ($1, $2, $3)",
             [username, passwordHash, ['SUDO']]
         )
-        console.log(`User ${username} created successfully.`)
+        logger.info(`User ${username} created successfully.`)
     } catch (error) {
-        console.error("Error creating user:", error)
+        logger.error("Error creating user:", error)
     } finally {
         client.release()
     }

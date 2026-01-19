@@ -1,4 +1,5 @@
 import { pool } from "@/lib/db";
+import logger from "@/lib/logger";
 
 export enum EventType {
     LOGIN = "login",
@@ -30,6 +31,6 @@ export async function logEvent({ type, data, userId, sourceId }: LogEventProps):
             [type, data, userId, sourceId]
         );
     } catch (error) {
-        console.error('Error logging event:', error);
+        logger.error('Error logging event:', error);
     }
 };

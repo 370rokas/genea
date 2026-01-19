@@ -11,6 +11,8 @@ import { ApproveSourceBody, RemoveSourceBody, SourceProposal } from "@/types";
 import { useMemo, useState } from "react";
 import CategorySelector from "@/components/admin/categorySelector";
 import TagSelector from "@/components/search/tagSelector";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 interface OnCloseReturn {
     status: "approved" | "rejected" | "closed";
@@ -95,6 +97,19 @@ function ProposalManageDialog({ proposal, onClose, open }: { proposal: SourcePro
                         </Field>
                     </DialogDescription>
 
+                    {proposal.possible_duplicates && proposal.possible_duplicates.length > 0 && (
+                        <DialogDescription>
+                            <Label className="mb-2 font-bold text-red-600">Galimi pasikartojantys šaltiniai:</Label>
+                            <ul className="list-disc list-inside text-red-600">
+                                {proposal.possible_duplicates.map((dup, index) => (
+                                    <li key={index}>
+                                        <Link href={dup.link} target="_blank" className="underline">{dup.title}</Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </DialogDescription>
+                    )}
+
                 </DialogPanel>
 
 
@@ -165,8 +180,6 @@ function ProposalTable({ proposals }: { proposals: SourceProposal[] }) {
                     proposal={selectedProposal}
                     open={isModalOpen}
                     onClose={(data: OnCloseReturn) => {
-                        console.log(data);
-
                         var endpoint: string | null = null;
                         var payload: ApproveSourceBody | RemoveSourceBody | null = null;
 
@@ -195,7 +208,6 @@ function ProposalTable({ proposals }: { proposals: SourceProposal[] }) {
                                     alert("Nepavyko išsaugoti pakeitimų");
                                 }
                             }).catch((err) => {
-                                console.log(err);
                                 alert("Nepavyko išsaugoti pakeitimų");
                             })
                         }

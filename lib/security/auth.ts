@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { pool } from "@/lib/db";
 import { Permission } from "@/types";
 import bcrypt from "bcryptjs";
-import { EventType, logEvent } from "./eventLog";
+import { EventType, logEvent } from "@/lib/eventLog";
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
             name: "Credentials",
             credentials: {
                 username: { label: "Username", type: "text", placeholder: "slapyvardis" },
-                password: { label: "Password", type: "password", plachorder: "slaptažodis" }
+                password: { label: "Password", type: "password", placeholder: "slaptažodis" }
             },
             async authorize(credentials) {
                 const { username, password } = credentials as { username: string; password: string }

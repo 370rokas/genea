@@ -11,7 +11,6 @@ export interface SourceCategory {
 export interface LocationData {
     id: number;
     name: string;
-    path: string;
 }
 
 export interface SourceDisplayData {
@@ -73,6 +72,11 @@ export interface SourceProposal {
     description: string;
     link: string;
     submitted_at: string;
+
+    possible_duplicates?: {
+        title: string;
+        link: string;
+    }[];
 }
 
 export function hasPermission(

@@ -1,9 +1,10 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/lib/security/auth";
 import { pool } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { hasPermission } from "@/types";
 import { EventType, logEvent } from "@/lib/eventLog";
+import logger from "@/lib/logger";
 
 export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
             headers: { "Content-Type": "application/json" },
         });
     } catch (error) {
-        console.error("Error creating user:", error);
+        logger.error("Error creating user:", error);
         return new Response("Internal Server Error", { status: 500 });
     }
 }

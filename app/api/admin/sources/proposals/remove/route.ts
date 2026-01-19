@@ -1,4 +1,4 @@
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/lib/security/auth";
 import { pool } from "@/lib/db";
 import { EventType, logEvent } from "@/lib/eventLog";
 import { hasPermission, RemoveSourceBody } from "@/types";

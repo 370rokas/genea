@@ -22,7 +22,6 @@ export default function SourcesPage() {
     const [selectedTags, setSelectedTags] = useState<number[]>([]);
     const [filterText, setFilterText] = useState<string>("");
 
-    const { data: tags, isLoading: tagsLoading } = useSourceTags();
     const { data: sources, isLoading: sourcesLoading } = useSources();
     const { data: categories, isLoading: categoriesLoading } = useSourceCategories();
     return (
@@ -94,7 +93,7 @@ export default function SourcesPage() {
 
             {/* Search Results */}
             <div className="flex w-full max-w-1xl flex-col gap-4 bg-white p-4 rounded-md shadow-md">
-                {sourcesLoading || categoriesLoading || tagsLoading || sources == undefined ? (
+                {sourcesLoading || categoriesLoading || sources == undefined ? (
                     <div>Įkeliama...</div>
                 ) : (
                     <SourceTable displayData={sources} filterSettings={

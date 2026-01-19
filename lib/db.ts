@@ -2,6 +2,7 @@ import { LocationData, SourceCategory, SourceDisplayData, SourceTag } from '@/ty
 import { cacheTag, revalidateTag } from 'next/cache';
 import pg from 'pg';
 import { createNotif } from '@/lib/notifs';
+import logger from '@/lib/logger';
 
 const { Pool } = pg;
 
@@ -20,11 +21,11 @@ export const fetchSourceTags = async (): Promise<SourceTag[]> => {
     try {
         const res = await pool.query('SELECT id, name FROM source_tag ORDER BY name ASC');
         return res.rows.map(row => ({
-            id: row.id,
+            id: parseInt(row.id, 10),
             name: row.name,
         }));
     } catch (error) {
-        console.error('Error fetching source tags:', error);
+        logger.error('Error fetching source tags:', error);
         throw error;
     }
 };
@@ -40,7 +41,7 @@ export const fetchSourceCategories = async (): Promise<SourceCategory[]> => {
             name: row.name,
         }));
     } catch (error) {
-        console.error('Error fetching source categories:', error);
+        logger.error('Error fetching source categories:', error);
         throw error;
     }
 };
@@ -50,14 +51,13 @@ export const fetchLocations = async (): Promise<LocationData[]> => {
     cacheTag('locations');
 
     try {
-        const res = await pool.query('SELECT id, name, path FROM location ORDER BY id ASC');
+        const res = await pool.query('SELECT id, name FROM location ORDER BY id ASC');
         return res.rows.map(row => ({
             id: row.id,
-            name: row.name,
-            path: row.path
+            name: row.name
         }));
     } catch (error) {
-        console.error('Error fetching locations:', error);
+        logger.error('Error fetching locations:', error);
         throw error;
     }
 };
@@ -113,7 +113,7 @@ export const fetchDisplaySources = async (): Promise<SourceDisplayData[]> => {
         }));
 
     } catch (error) {
-        console.error("Error fetching display sources:", error);
+        logger.error("Error fetching display sources:", error);
         throw error;
     }
 };
@@ -132,7 +132,7 @@ export const createCategory = async (name: string): Promise<SourceCategory> => {
             name: res.rows[0].name,
         };
     } catch (error) {
-        console.error('Error creating source category:', error);
+        logger.error('Error creating source category:', error);
         throw error;
     }
 };
@@ -151,7 +151,7 @@ export const createTag = async (name: string): Promise<SourceTag> => {
             name: res.rows[0].name,
         };
     } catch (error) {
-        console.error('Error creating source tag:', error);
+        logger.error('Error creating source tag:', error);
         throw error;
     }
 };
@@ -164,13 +164,13 @@ export const createSourceSubmission = async (title: string, description: string,
         );
 
         // Create a notification for the new source submission
-        createNotif(`New source submission: "${title}"`, null, null).then(() => {
+        createNotif(`New source submission: "${title}"`).then(() => {
             return;
         }).catch((error) => {
-            console.error('Error creating notification for source submission:', error);
+            logger.error('Error creating notification for source submission:', error);
         });
     } catch (error) {
-        console.error('Error creating source submission:', error);
+        logger.error('Error creating source submission:', error);
         throw error;
     }
 };
@@ -186,7 +186,7 @@ export const createLocation = async (name: string, parentId?: number): Promise<{
 
         return { id: id.rows[0].id, name };
     } catch (error) {
-        console.log('Error creating location: ', error);
+        logger.error('Error creating location: ', error);
         throw error;
     }
 }
