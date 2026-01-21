@@ -25,6 +25,13 @@ export interface SourceDisplayData {
     locations: LocationData[];
 };
 
+export interface DuplicateCheckResponse {
+    duplicate: boolean;
+    id?: number;
+    title?: string | null;
+    link?: string | null;
+}
+
 export interface ApproveSourceBody {
     proposal_id: number;
 
@@ -72,11 +79,6 @@ export interface SourceProposal {
     description: string;
     link: string;
     submitted_at: string;
-
-    possible_duplicates?: {
-        title: string;
-        link: string;
-    }[];
 }
 
 export function hasPermission(

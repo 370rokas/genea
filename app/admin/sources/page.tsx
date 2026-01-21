@@ -2,6 +2,7 @@ import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/ui/tabs";
 import CategoryView from "./CategoryView";
 import TagView from "./TagsView";
 import ProposalView from "./ProposalView";
+import SourceView from "./SourceView";
 
 export default function SourcesAdminPage() {
     return (
@@ -23,7 +24,7 @@ export default function SourcesAdminPage() {
                 </TabsList>
 
                 <TabsPanel value="saltiniai" className="w-full p-6">
-                    <div>Šaltiniai turinys</div>
+                    <SourceView />
                 </TabsPanel>
 
                 <TabsPanel value="kategorijos" className="w-full p-6">

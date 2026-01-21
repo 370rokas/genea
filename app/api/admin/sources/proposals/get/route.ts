@@ -17,19 +17,18 @@ export async function GET() {
             ss.title,
             ss.description,
             ss.link,
-            ss.submitted_at,
-            json_agg(s.*) FILTER (WHERE s.id IS NOT NULL) AS possible_duplicates
+            ss.submitted_at
             FROM source_submission ss
-            LEFT JOIN source s
-            ON s.link = ss.link
             GROUP BY ss.id
             ORDER BY ss.submitted_at DESC;`
     );
 
-    const resp: SourceProposal[] = res.rows.map(row => ({
-        ...row,
-        possible_duplicates:
-            row.possible_duplicates?.length ? row.possible_duplicates : undefined
+    const resp: SourceProposal[] = res.rows.map((row: any) => ({
+        id: row.id,
+        title: row.title,
+        description: row.description,
+        link: row.link,
+        submitted_at: row.submitted_at,
     }));
 
     return new Response(JSON.stringify(resp), {

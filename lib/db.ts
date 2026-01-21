@@ -62,7 +62,7 @@ export const fetchLocations = async (): Promise<LocationData[]> => {
     }
 };
 
-export const fetchDisplaySources = async (): Promise<SourceDisplayData[]> => {
+export const fetchDisplaySourcesLT = async (): Promise<SourceDisplayData[]> => {
     "use cache";
     cacheTag("sources");
 
@@ -72,6 +72,62 @@ export const fetchDisplaySources = async (): Promise<SourceDisplayData[]> => {
         s.id,
         s.title,
         s.description,
+        s.link,
+
+        sc.id AS category_id,
+        sc.name AS category_name,
+
+        COALESCE(
+          json_agg(DISTINCT jsonb_build_object('id', st.id, 'name', st.name))
+          FILTER (WHERE st.id IS NOT NULL),
+          '[]'
+        ) AS tags,
+
+        COALESCE(
+          json_agg(DISTINCT jsonb_build_object('id', l.id, 'name', l.name))
+          FILTER (WHERE l.id IS NOT NULL),
+          '[]'
+        ) AS locations
+
+      FROM source s
+      LEFT JOIN source_category sc ON s.category_id = sc.id
+      LEFT JOIN source_tags stg ON stg.source_id = s.id
+      LEFT JOIN source_tag st ON stg.tag_id = st.id
+      LEFT JOIN source_locations sl ON sl.source_id = s.id
+      LEFT JOIN location l ON sl.location_id = l.id
+
+      GROUP BY s.id, sc.id
+      ORDER BY s.id ASC
+    `);
+
+        return rows.map(row => ({
+            id: row.id,
+            title: row.title,
+            description: row.description,
+            link: row.link,
+            category: row.category_id
+                ? { id: row.category_id, name: row.category_name }
+                : { id: 0, name: '' },
+            tags: row.tags,
+            locations: row.locations,
+        }));
+
+    } catch (error) {
+        logger.error("Error fetching display sources:", error);
+        throw error;
+    }
+};
+
+export const fetchDisplaySourcesEN = async (): Promise<SourceDisplayData[]> => {
+    "use cache";
+    cacheTag("sources");
+
+    try {
+        const { rows } = await pool.query(`
+      SELECT
+        s.id,
+        COALESCE(s.title_en, s.title) AS title,
+        COALESCE(s.description_en, s.description) AS description,
         s.link,
 
         sc.id AS category_id,

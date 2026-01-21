@@ -1,6 +1,6 @@
 "use client";
 
-import { useSourceTags } from "@/app/saltiniai/dataFetching";
+import { useSourceTags } from "@/hooks/dataFetching";
 import { CreateTagDialog } from "@/components/admin/tagCreateDialog";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";

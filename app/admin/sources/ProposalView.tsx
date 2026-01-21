@@ -6,13 +6,15 @@ import { Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, Dia
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useSourceProposals } from "@/hooks/dataFetching";
-import { ApproveSourceBody, RemoveSourceBody, SourceProposal } from "@/types";
+import { ApproveSourceBody, DuplicateCheckResponse, RemoveSourceBody, SourceProposal } from "@/types";
 import { useMemo, useState } from "react";
 import CategorySelector from "@/components/admin/categorySelector";
 import TagSelector from "@/components/search/tagSelector";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { useSourceProposals } from "@/hooks/dataFetching";
+import { Spinner } from "@/components/ui/spinner";
+import { CircleCheck, OctagonAlert } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface OnCloseReturn {
     status: "approved" | "rejected" | "closed";
@@ -48,11 +50,45 @@ function ProposalManageDialog({ proposal, onClose, open }: { proposal: SourcePro
     const [tagIds, setTagIds] = useState<number[]>([]);
     const [locationIds, setLocationIds] = useState<number[]>([]);
 
+    const [isCheckingDuplicates, setIsCheckingDuplicates] = useState(false);
+    const [duplicateResults, setDuplicateResults] = useState<DuplicateCheckResponse | null>(null);
+
     useMemo(() => {
         setTitle(proposal.title);
         setDescription(proposal.description);
         setLink(proposal.link);
     }, [proposal]);
+
+    // Tikrinam dublius (ir kai pakeiciam linka refreshinam su debounce'u)
+    useMemo(() => {
+        if (!link || link.trim() === "") {
+            setDuplicateResults(null);
+            return;
+        }
+
+        if (isCheckingDuplicates) {
+            return;
+        }
+
+        setIsCheckingDuplicates(true);
+        setDuplicateResults(null);
+
+        const timeout = setTimeout(() => {
+            fetch(`/api/admin/sources/checkSourceLinkDuplicate?link=${encodeURIComponent(link)}`)
+                .then((resp: Response) => resp.json())
+                .then((data: DuplicateCheckResponse) => {
+                    setDuplicateResults(data);
+                })
+                .catch((err) => {
+                    console.error("Error checking duplicate source link:", err);
+                })
+                .finally(() => {
+                    setIsCheckingDuplicates(false);
+                });
+        }, 500);
+
+        return () => clearTimeout(timeout);
+    }, [link]);
 
     return (
         <Dialog open={open} onOpenChange={(open: boolean) => handleClose(open)}>
@@ -97,18 +133,37 @@ function ProposalManageDialog({ proposal, onClose, open }: { proposal: SourcePro
                         </Field>
                     </DialogDescription>
 
-                    {proposal.possible_duplicates && proposal.possible_duplicates.length > 0 && (
-                        <DialogDescription>
-                            <Label className="mb-2 font-bold text-red-600">Galimi pasikartojantys šaltiniai:</Label>
-                            <ul className="list-disc list-inside text-red-600">
-                                {proposal.possible_duplicates.map((dup, index) => (
-                                    <li key={index}>
-                                        <Link href={dup.link} target="_blank" className="underline">{dup.title}</Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </DialogDescription>
-                    )}
+                    <DialogDescription>
+                        {isCheckingDuplicates && <div className="flex">
+                            <Spinner /> Tikrinama dėl pasikartojimų...
+                        </div>}
+
+                        {!isCheckingDuplicates && duplicateResults && (
+                            <Alert>
+                                {duplicateResults.duplicate ? (
+                                    <>
+                                        <OctagonAlert className="text-red-500 mr-2" />
+                                        <AlertTitle>Nuoroda galimai dubliuojasi:</AlertTitle>
+                                        <AlertDescription>
+                                            {duplicateResults.title} ({duplicateResults.id})
+                                        </AlertDescription>
+                                        {duplicateResults.link && (
+                                            <AlertDescription>
+                                                <Link href={duplicateResults.link} target="_blank" className="underline">
+                                                    {duplicateResults.link}
+                                                </Link>
+                                            </AlertDescription>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        <CircleCheck className="text-green-500 mr-2" />
+                                        <AlertTitle>Dublių nerasta.</AlertTitle>
+                                    </>
+                                )}
+                            </Alert>
+                        )}
+                    </DialogDescription>
 
                 </DialogPanel>
 

@@ -11,7 +11,7 @@ import {
     ComboboxPopup,
     ComboboxValue,
 } from "@/components/ui/combobox";
-import { useSourceTags } from "@/app/saltiniai/dataFetching";
+import { useSourceTags } from "@/hooks/dataFetching";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
@@ -26,7 +26,6 @@ export default function TagSelector({
     setSelectedTags,
 }: TagSelectorProps) {
     const { data, isLoading, isError } = useSourceTags();
-    console.log("TagSelector fetched tags:", data);
     const [items, setItems] = useState<{ label: string; value: number }[]>([]);
 
     useEffect(() => {

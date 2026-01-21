@@ -9,9 +9,9 @@ import { Button } from "@/components/ui/button";
 import { LocationSelector } from "@/components/search/LocationSelector";
 
 import { SourceTable } from "@/components/sources/SourceTable";
-import { useSourceCategories, useSources, useSourceTags } from "./dataFetching";
 import CategorySelector from "@/components/admin/categorySelector";
 import TagSelector from "@/components/search/tagSelector";
+import { useSourcesLT } from "@/hooks/dataFetching";
 
 
 export default function SourcesPage() {
@@ -22,12 +22,11 @@ export default function SourcesPage() {
     const [selectedTags, setSelectedTags] = useState<number[]>([]);
     const [filterText, setFilterText] = useState<string>("");
 
-    const { data: sources, isLoading: sourcesLoading } = useSources();
-    const { data: categories, isLoading: categoriesLoading } = useSourceCategories();
+    const { data: sources, isLoading: sourcesLoading } = useSourcesLT();
     return (
         <main className="flex min-h-screen flex-col items-center pt-12 px-24 bg-gray-200">
 
-            {/* Main Search Bar*/}
+            {/* Paieška */}
             <div className="flex w-full flex-col gap-4 mb-8">
 
                 <CategorySelector
@@ -56,7 +55,7 @@ export default function SourcesPage() {
                 </div>
             </div>
 
-            {/* Additional Filters */}
+            {/* Filtrai */}
             <div className="w-full max-w-8xl mb-8">
                 <AnimatePresence initial={false}>
                     {showFilters && (
@@ -91,9 +90,9 @@ export default function SourcesPage() {
                 </AnimatePresence>
             </div>
 
-            {/* Search Results */}
+            {/* Paieškos rezultatai */}
             <div className="flex w-full max-w-1xl flex-col gap-4 bg-white p-4 rounded-md shadow-md">
-                {sourcesLoading || categoriesLoading || sources == undefined ? (
+                {sourcesLoading || sources == undefined ? (
                     <div>Įkeliama...</div>
                 ) : (
                     <SourceTable displayData={sources} filterSettings={

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Autocomplete, AutocompleteEmpty, AutocompleteInput, AutocompleteItem, AutocompleteList, AutocompletePopup, AutocompleteStatus } from "../ui/autocomplete";
 import { cn } from "@/lib/utils";
-import { useLocations } from "@/app/saltiniai/dataFetching";
+import { useLocations } from "@/hooks/dataFetching";
 
 interface LocationSelectorProps {
     selectedLocations: string[];

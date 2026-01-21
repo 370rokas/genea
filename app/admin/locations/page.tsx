@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocations } from "@/app/saltiniai/dataFetching";
+import { useLocations } from "@/hooks/dataFetching";
 import { LocationsTable } from "./LocationsTable";
 import CreateLocationDialog from "@/components/admin/locationCreateDialog";
 
