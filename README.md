@@ -21,11 +21,12 @@ services:
   genea:
     image: ghcr.io/370rokas/genea:latest
     container_name: genea
-    restart: always
-    ports:
-      - "3000:3000"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
 ```
 
 ### Vietinis paleidimas
