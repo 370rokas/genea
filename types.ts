@@ -25,6 +25,22 @@ export interface SourceDisplayData {
     locations: LocationData[];
 };
 
+export type SourceState = "OK" | "DISABLED";
+
+export interface FullSourceData extends SourceDisplayData {
+    title_en: string | null;
+    description_en: string | null;
+
+    state: SourceState;
+}
+
+export interface AdminSourceListing {
+    id: number;
+    title: string;
+    description: string;
+    state: SourceState;
+};
+
 export interface DuplicateCheckResponse {
     duplicate: boolean;
     id?: number;

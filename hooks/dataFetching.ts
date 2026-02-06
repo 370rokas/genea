@@ -1,6 +1,6 @@
 "use client";
 
-import { SourceCategory, SourceDisplayData, SourceTag, LocationData, SourceProposal } from "@/types";
+import { SourceCategory, SourceDisplayData, SourceTag, LocationData, SourceProposal, AdminSourceListing } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 
 async function fetchTags(): Promise<SourceTag[]> {
@@ -37,6 +37,20 @@ async function fetchSourceCategories(): Promise<SourceCategory[]> {
   const res = await fetch('/api/getSourceCategories');
   if (!res.ok) throw new Error('Failed to fetch source categories');
   return res.json();
+}
+
+async function fetchAdminSourceListings(): Promise<AdminSourceListing[]> {
+  const res = await fetch('/api/admin/sources/list');
+  if (!res.ok) throw new Error('Failed to fetch admin source listings');
+  return res.json();
+}
+
+export function useAdminSourceListings() {
+  return useQuery({
+    queryKey: ['adminSourceListings'],
+    queryFn: fetchAdminSourceListings,
+    staleTime: Infinity,
+  });
 }
 
 export function useSourceCategories() {

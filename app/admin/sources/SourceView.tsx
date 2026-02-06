@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import {
     createColumnHelper,
     flexRender,
@@ -19,17 +20,17 @@ import {
     TableRow
 } from '@/components/ui/table';
 
-import { useSourcesLT } from '@/hooks/dataFetching';
-import { SourceDisplayData } from '@/types';
+import { AdminSourceListing } from '@/types';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, SearchIcon, SquarePenIcon } from 'lucide-react';
 import { Group, GroupSeparator, GroupText } from '@/components/ui/group';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
+import { useAdminSourceListings } from '@/hooks/dataFetching';
 
 export default function SourceView() {
-    const { data: sources, isLoading: sourcesLoading } = useSourcesLT();
+    const { data: sources, isLoading: sourcesLoading } = useAdminSourceListings();
 
-    const columnHelper = createColumnHelper<SourceDisplayData>();
+    const columnHelper = createColumnHelper<AdminSourceListing>();
 
     const columns = React.useMemo(
         () => [
@@ -48,19 +49,33 @@ export default function SourceView() {
                     </div>
                 ),
             }),
+            columnHelper.accessor('state', {
+                header: '',
+                cell: info => (
+                    <div className="flex items-center gap-2">
+                        {info.getValue() === "OK" ? (
+                            <div className="flex items-center gap-2">
+                                <span
+                                    aria-label="Aktyvus šaltinis"
+                                    className="inline-block size-2 rounded-full bg-emerald-500"
+                                />
+                            </div>
+                        ) : (
+                            <span className="text-muted-foreground">{info.getValue()}</span>
+                        )}
+                    </div>
+                ),
+            }),
             columnHelper.display({
-                header: 'Veiksmai',
+                header: '',
                 id: 'actions',
-                cell: () => (
+                cell: info => (
                     <div className="flex gap-2 flex items-center">
-                        <span
-                            aria-label="Aktyvus šaltinis"
-                            className="size-2 rounded-full bg-emerald-500"
-                        />
-
-                        <Button aria-label="Redaguoti" size="icon" variant="ghost">
-                            <SquarePenIcon aria-hidden="true" className="h-4 w-4" />
-                        </Button>
+                        <Link href={`/admin/sources/${info.row.original.id}`}>
+                            <Button aria-label="Redaguoti" size="icon" variant="ghost">
+                                <SquarePenIcon aria-hidden="true" className="h-4 w-4" />
+                            </Button>
+                        </Link>
                     </div>
                 ),
             })

@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ApproveSourceBody, DuplicateCheckResponse, RemoveSourceBody, SourceProposal } from "@/types";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CategorySelector from "@/components/admin/categorySelector";
 import TagSelector from "@/components/search/tagSelector";
 import Link from "next/link";
@@ -53,27 +53,23 @@ function ProposalManageDialog({ proposal, onClose, open }: { proposal: SourcePro
     const [isCheckingDuplicates, setIsCheckingDuplicates] = useState(false);
     const [duplicateResults, setDuplicateResults] = useState<DuplicateCheckResponse | null>(null);
 
-    useMemo(() => {
+    useEffect(() => {
         setTitle(proposal.title);
         setDescription(proposal.description);
         setLink(proposal.link);
     }, [proposal]);
 
     // Tikrinam dublius (ir kai pakeiciam linka refreshinam su debounce'u)
-    useMemo(() => {
+    useEffect(() => {
         if (!link || link.trim() === "") {
             setDuplicateResults(null);
+            setIsCheckingDuplicates(false);
             return;
         }
 
-        if (isCheckingDuplicates) {
-            return;
-        }
+        const timer = setTimeout(() => {
+            setIsCheckingDuplicates(true);
 
-        setIsCheckingDuplicates(true);
-        setDuplicateResults(null);
-
-        const timeout = setTimeout(() => {
             fetch(`/api/admin/sources/checkSourceLinkDuplicate?link=${encodeURIComponent(link)}`)
                 .then((resp: Response) => resp.json())
                 .then((data: DuplicateCheckResponse) => {
@@ -87,7 +83,7 @@ function ProposalManageDialog({ proposal, onClose, open }: { proposal: SourcePro
                 });
         }, 500);
 
-        return () => clearTimeout(timeout);
+        return () => clearTimeout(timer);
     }, [link]);
 
     return (
@@ -98,7 +94,7 @@ function ProposalManageDialog({ proposal, onClose, open }: { proposal: SourcePro
                 </DialogHeader>
 
                 <DialogPanel>
-                    <DialogDescription>
+                    <div className="py-4">
                         <Field className="mb-4">
                             <FieldLabel>Pavadinimas:</FieldLabel>
                             <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -131,7 +127,7 @@ function ProposalManageDialog({ proposal, onClose, open }: { proposal: SourcePro
                             <FieldLabel>Žymos:</FieldLabel>
                             <TagSelector selectedTags={tagIds} setSelectedTags={setTagIds} />
                         </Field>
-                    </DialogDescription>
+                    </div>
 
                     <DialogDescription>
                         {isCheckingDuplicates && <div className="flex">

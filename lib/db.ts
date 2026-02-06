@@ -1,4 +1,4 @@
-import { LocationData, SourceCategory, SourceDisplayData, SourceTag } from '@/types';
+import { FullSourceData, LocationData, SourceCategory, SourceDisplayData, SourceTag } from '@/types';
 import { cacheTag, revalidateTag } from 'next/cache';
 import pg from 'pg';
 import { createNotif } from '@/lib/notifs';
@@ -13,6 +13,52 @@ if (!process.env.DATABASE_URL) {
 export const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
 });
+
+export const getSourceById = async (id: number): Promise<FullSourceData | null> => {
+    try {
+        const res = await pool.query(`
+            SELECT
+                s.id,
+                s.title,
+                s.title_en,
+                s.description,
+                s.description_en,
+                s.link,
+
+                sc.id AS category_id,
+                sc.name AS category_name,
+
+                COALESCE(
+                json_agg(DISTINCT jsonb_build_object('id', st.id, 'name', st.name))
+                FILTER (WHERE st.id IS NOT NULL),
+                '[]'
+                ) AS tags,
+
+                COALESCE(
+                json_agg(DISTINCT jsonb_build_object('id', l.id, 'name', l.name))
+                FILTER (WHERE l.id IS NOT NULL),
+                '[]'
+                ) AS locations
+
+            FROM source s
+            LEFT JOIN source_category sc ON s.category_id = sc.id
+            LEFT JOIN source_tags stg ON stg.source_id = s.id
+            LEFT JOIN source_tag st ON stg.tag_id = st.id
+            LEFT JOIN source_locations sl ON sl.source_id = s.id
+            LEFT JOIN location l ON sl.location_id = l.id
+
+            -- Add the WHERE clause here
+            WHERE s.id = $1  -- Use your specific ID or a parameter placeholder
+
+            GROUP BY s.id, sc.id;
+            
+            `, [id]);
+        return res.rows[0];
+    } catch (error) {
+        logger.error('Error fetching source by ID:', error);
+        throw error;
+    }
+};
 
 export const fetchSourceTags = async (): Promise<SourceTag[]> => {
     "use cache";
