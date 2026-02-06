@@ -8,7 +8,7 @@ export default function Topbar() {
         <header className="w-full bg-white shadow-md">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
                 <Link href="/" className="text-xl font-bold text-gray-900">
-                    Šaltinių Bazė
+                    Genea Šaltinių Bazė
                 </Link>
 
                 <nav className="flex space-x-4">

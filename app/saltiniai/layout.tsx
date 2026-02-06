@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import Topbar from "@/components/topbar";
 
 export default function SaltiniaiLayout({
@@ -11,6 +12,7 @@ export default function SaltiniaiLayout({
             <>
                 {children}
             </>
+            <Footer />
         </>
     );
 }
