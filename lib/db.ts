@@ -52,7 +52,7 @@ export const getSourceById = async (id: number): Promise<FullSourceData | null> 
         return res.rows[0];
     } catch (error) {
         logger.error('Error fetching source by ID:', error);
-        throw error;
+        return null;
     }
 };
 
@@ -68,7 +68,7 @@ export const fetchSourceTags = async (): Promise<SourceTag[]> => {
         }));
     } catch (error) {
         logger.error('Error fetching source tags:', error);
-        throw error;
+        return [];
     }
 };
 
@@ -84,7 +84,7 @@ export const fetchSourceCategories = async (): Promise<SourceCategory[]> => {
         }));
     } catch (error) {
         logger.error('Error fetching source categories:', error);
-        throw error;
+        return [];
     }
 };
 
@@ -100,7 +100,7 @@ export const fetchLocations = async (): Promise<LocationData[]> => {
         }));
     } catch (error) {
         logger.error('Error fetching locations:', error);
-        throw error;
+        return [];
     }
 };
 
@@ -156,7 +156,7 @@ export const fetchDisplaySourcesLT = async (): Promise<SourceDisplayData[]> => {
 
     } catch (error) {
         logger.error("Error fetching display sources:", error);
-        throw error;
+        return [];
     }
 };
 
@@ -212,7 +212,7 @@ export const fetchDisplaySourcesEN = async (): Promise<SourceDisplayData[]> => {
 
     } catch (error) {
         logger.error("Error fetching display sources:", error);
-        throw error;
+        return [];
     }
 };
 
