@@ -1,42 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Genea svetainė
 
-## Getting Started
+Sistema skirta šaltinių ir kt. informacijos kaupimui.
 
-First, run the development server:
+## Naudojimo instrukcijos
 
+Prieš paleidžiant, reikia pasiruošti PostgreSQL duombazę, ją paruošti naudojimui paleidžiant `database_schema.sql` kodą.
+
+Aplikacijai reikia šių aplinkos kintamųjų, juos galima nustatyti `.env` faile:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+DATABASE_URL # PostgreSQL prisijungimo URI
+AUTH_SECRET # Atsitiktinis kodas, naudojamas sesijų šifravimui
+MAILERSEND_API_KEY # API Raktas El. Pašto pranešimams (neprivaloma)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Docker paleidimas
+Rekomenduojama naudoti viešai svetainės versijai.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```yaml
+services:
+  genea:
+    image: ghcr.io/370rokas/genea:latest
+    container_name: genea
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Vietinis paleidimas
+Rekomenduojama naudoti testavimui ir kūrimui.
 
-## Learn More
+1.  Nuklonuoti kodą:
+```bash
+git clone [https://github.com/370rokas/genea.git](https://github.com/370rokas/genea.git)
+cd genea
+```
 
-To learn more about Next.js, take a look at the following resources:
+3.  Įdiegti reikalavimus:
+```bash
+npm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4.  Paleisti dev aplinką:
+```bash
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## Aplinkos kintamieji (Environment Variables)
-
-MAILERSEND_API_KEY
-DATABASE_URL
-AUTH_SECRET
+5.  Kompiliuoti svetainę:
+```bash
+npm run build # kompiliuoti
+npm run start # paleisti
+```

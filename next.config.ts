@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   cacheComponents: true,
   env: {
-    GENEA_COMMIT_SHA: process.env.GENEA_COMMIT_SHA,
+    NEXT_PUBLIC_COMMIT_SHA: process.env.NEXT_PUBLIC_COMMIT_SHA,
   },
 };
 

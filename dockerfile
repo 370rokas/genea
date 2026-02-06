@@ -24,8 +24,8 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Embed commit SHA as env var for usage in websites footer
-ARG GENEA_COMMIT_SHA
-ENV GENEA_COMMIT_SHA=$GENEA_COMMIT_SHA
+ARG NEXT_PUBLIC_COMMIT_SHA
+ENV NEXT_PUBLIC_COMMIT_SHA=$NEXT_PUBLIC_COMMIT_SHA
 
 RUN \
     if [ -f yarn.lock ]; then yarn run build; \
