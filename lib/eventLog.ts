@@ -15,6 +15,8 @@ export enum EventType {
     REMOVE_SOURCE_PROPOSAL = "remove_source_proposal",
 
     PUSH_EMAILS = "push_emails",
+
+    EDIT_SOURCE = "edit_source",
 };
 
 interface LogEventProps {
