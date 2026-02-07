@@ -5,8 +5,8 @@ import { getServerSession } from "next-auth";
 import { cacheTag } from "next/cache";
 
 async function getData(): Promise<AdminSourceListing[]> {
-    "use cache";
-    cacheTag("sources", "source-state-change");
+    //"use cache: remote";
+    //cacheTag("sources", "source-state-change");
 
     const { rows } = await pool.query(`
       SELECT

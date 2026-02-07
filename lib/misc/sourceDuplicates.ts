@@ -32,8 +32,8 @@ function minimizeLink(url: string): string {
 }
 
 async function getLinks(): Promise<Map<string, number>> {
-    "use cache";
-    cacheTag("sources");
+    //"use cache: remote";
+    //cacheTag("sources");
 
     const res = await pool.query(`
       SELECT

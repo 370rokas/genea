@@ -1,6 +1,6 @@
 import { fetchDisplaySourcesEN } from "@/lib/db";
 
-export const dynamic = "force-dynamic";
+
 
 export async function GET() {
     const locations = await fetchDisplaySourcesEN();

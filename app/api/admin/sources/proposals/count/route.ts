@@ -4,11 +4,11 @@ import { hasPermission } from "@/types";
 import { getServerSession } from "next-auth/next";
 import { cacheTag } from "next/cache";
 
-export const dynamic = "force-dynamic";
+
 
 async function fetchProposalsCount() {
-    "use cache";
-    cacheTag("source-proposals-count");
+    //"use cache: remote";
+    //cacheTag("source-proposals-count");
 
     const res = await pool.query<{ count: string }>(`
         SELECT COUNT(*) AS count

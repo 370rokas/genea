@@ -57,8 +57,8 @@ export const getSourceById = async (id: number): Promise<FullSourceData | null> 
 };
 
 export const fetchSourceTags = async (): Promise<SourceTag[]> => {
-    "use cache";
-    cacheTag('source-tags');
+    //"use cache: remote";
+    //cacheTag('source-tags');
 
     try {
         const res = await pool.query('SELECT id, name FROM source_tag ORDER BY name ASC');
@@ -73,8 +73,8 @@ export const fetchSourceTags = async (): Promise<SourceTag[]> => {
 };
 
 export const fetchSourceCategories = async (): Promise<SourceCategory[]> => {
-    "use cache";
-    cacheTag('source-categories');
+    //"use cache: remote";
+    //cacheTag('source-categories');
 
     try {
         const res = await pool.query('SELECT id, name FROM source_category ORDER BY id ASC');
@@ -89,8 +89,8 @@ export const fetchSourceCategories = async (): Promise<SourceCategory[]> => {
 };
 
 export const fetchLocations = async (): Promise<LocationData[]> => {
-    "use cache";
-    cacheTag('locations');
+    //"use cache: remote";
+    //cacheTag('locations');
 
     try {
         const res = await pool.query('SELECT id, name FROM location ORDER BY id ASC');
@@ -105,8 +105,8 @@ export const fetchLocations = async (): Promise<LocationData[]> => {
 };
 
 export const fetchDisplaySourcesLT = async (): Promise<SourceDisplayData[]> => {
-    "use cache";
-    cacheTag("sources");
+    //"use cache: remote";
+    //cacheTag("sources");
 
     try {
         const { rows } = await pool.query(`
@@ -161,8 +161,8 @@ export const fetchDisplaySourcesLT = async (): Promise<SourceDisplayData[]> => {
 };
 
 export const fetchDisplaySourcesEN = async (): Promise<SourceDisplayData[]> => {
-    "use cache";
-    cacheTag("sources");
+    //"use cache: remote";
+    //cacheTag("sources");
 
     try {
         const { rows } = await pool.query(`
