@@ -4,6 +4,8 @@ import { pool } from "@/lib/db";
 import { authOptions } from "@/lib/security/auth";
 import { hasPermission, SourceProposal } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
     const session = await getServerSession(authOptions);
 

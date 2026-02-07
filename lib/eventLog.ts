@@ -29,7 +29,7 @@ interface LogEventProps {
 export async function logEvent({ type, data, userId, sourceId }: LogEventProps): Promise<void> {
     try {
         await pool.query(
-            'INSERT INTO event_log (type, data, user_id, source_id) VALUES ($1, $2, $3, $4)',
+            'INSERT INTO event_log (event_type, event_data, event_related_user, event_related_source) VALUES ($1, $2, $3, $4)',
             [type, data, userId, sourceId]
         );
     } catch (error) {
