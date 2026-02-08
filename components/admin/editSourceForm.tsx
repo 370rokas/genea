@@ -21,8 +21,11 @@ export function EditSourceForm({ startingData }: { startingData: FullSourceData 
     );
 
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-        startingData.category?.id || null
+        startingData.category_id ? parseInt(startingData.category_id) : null // @ts-ignore
     );
+
+    console.log("Selected category ID:", selectedCategoryId);
+    console.log(startingData)
 
     const [isSaving, setIsSaving] = useState(false);
 

@@ -29,9 +29,14 @@ export default function CategorySelector({
     }, [data]);
 
     return (
-        <Select aria-label="Kategorija" items={categoryOptions} onValueChange={(val: number | null) => {
-            setSelectedCategory(val);
-        }}>
+        <Select
+            aria-label="Kategorija"
+            items={categoryOptions}
+            value={selectedCategory?.toString() ?? null}
+            onValueChange={(val: string | null) => {
+                setSelectedCategory(val ? parseInt(val, 10) : null);
+            }}
+        >
             <SelectTrigger size="lg">
                 <SelectValue />
             </SelectTrigger>

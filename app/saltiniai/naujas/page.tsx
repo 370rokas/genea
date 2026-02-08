@@ -40,7 +40,13 @@ export default function NewSourcePage() {
 
             if (!res.ok) {
                 const data = await res.json();
-                throw new Error(data.message || "Įvyko klaida");
+
+                if (res.status === 429) {
+                    throw new Error("Per daug užklausų. Prašome palaukti ir bandyti dar kartą.");
+                } else {
+                    throw new Error(data.message || "Įvyko klaida");
+                }
+
             }
 
             // success

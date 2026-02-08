@@ -8,7 +8,7 @@ export enum RateLimitEndpoint {
 
 const rateLimitConfig: Record<RateLimitEndpoint, { allowed: number; duration: number }> = {
     [RateLimitEndpoint.SEND_MESSAGE]: { allowed: 3, duration: 60 }, // 3 requests per minute
-    [RateLimitEndpoint.SUBMIT_SOURCE_PROPOSAL]: { allowed: 3, duration: 60 }, // 3 requests per minute
+    [RateLimitEndpoint.SUBMIT_SOURCE_PROPOSAL]: { allowed: 6, duration: 60 }, // 3 requests per minute
     [RateLimitEndpoint.SEARCH_SOURCES]: { allowed: 60, duration: 60 }, // 1 request per second
 }
 

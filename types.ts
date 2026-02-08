@@ -31,6 +31,9 @@ export interface FullSourceData extends SourceDisplayData {
     title_en: string | null;
     description_en: string | null;
 
+    category_id: string | null;
+    category_name: string | null;
+
     state: SourceState;
 }
 
