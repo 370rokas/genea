@@ -35,7 +35,7 @@ export default function AdminLayout({
                     }}
                 >
                     <h2 className="text-xl font-semibold text-center">
-                        Valdymo panelės prisijungimas
+                        Valdymo pulto prisijungimas
                     </h2>
 
                     <div className="space-y-2">

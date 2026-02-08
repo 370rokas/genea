@@ -1,7 +1,7 @@
 import { checkRateLimit, RateLimitEndpoint, returnLimitedResponse } from "@/lib/security/ratelimit";
+import { SearchSourcesRequest, SearchSourcesResponseItem } from "@/types";
 import { unstable_cache } from "next/cache";
 import { pool } from "@/lib/db";
-import { SearchSourcesRequest, SearchSourcesResponseItem } from "@/types";
 
 const getCachedSearch = unstable_cache(
     async (searchQuery: { query: string; args: any[] }) => {
@@ -47,12 +47,15 @@ function buildSearchQuery(params: SearchSourcesRequest): { query: string; args: 
     }
 
     if (tagIds && tagIds.length > 0) {
-        filterQuery += ` AND EXISTS (
-            SELECT 1 FROM source_tags st 
+        // Paziurim ar yra visi tagai surenkant visus idus ir paziurint ar ju suma atitinka ieskomu tagu kiekiui
+        filterQuery += ` AND (
+            SELECT COUNT(DISTINCT st.tag_id) 
+            FROM source_tags st 
             WHERE st.source_id = s.id AND st.tag_id = ANY($${curArgIndex})
-        )`;
+        ) = $${curArgIndex + 1}`;
         queryArgs.push(tagIds);
-        curArgIndex++;
+        queryArgs.push(tagIds.length);
+        curArgIndex += 2;
     }
 
     var q = `
