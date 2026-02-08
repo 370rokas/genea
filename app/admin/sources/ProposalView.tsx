@@ -15,6 +15,7 @@ import { useSourceProposals } from "@/hooks/dataFetching";
 import { Spinner } from "@/components/ui/spinner";
 import { CircleCheck, OctagonAlert } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Textarea } from "@/components/ui/textarea";
 
 interface OnCloseReturn {
     status: "approved" | "rejected" | "closed";
@@ -102,7 +103,7 @@ function ProposalManageDialog({ proposal, onClose, open }: { proposal: SourcePro
 
                         <Field className="mb-4">
                             <FieldLabel>Aprašymas:</FieldLabel>
-                            <Input type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
+                            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
                         </Field>
 
                         <Field className="mb-4">

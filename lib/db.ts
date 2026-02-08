@@ -140,6 +140,7 @@ export const fetchDisplaySourcesLT = async (): Promise<SourceDisplayData[]> => {
 
       GROUP BY s.id, sc.id
       ORDER BY s.id ASC
+      LIMIT 50
     `);
 
         return rows.map(row => ({
@@ -196,6 +197,7 @@ export const fetchDisplaySourcesEN = async (): Promise<SourceDisplayData[]> => {
 
       GROUP BY s.id, sc.id
       ORDER BY s.id ASC
+      LIMIT 50
     `);
 
         return rows.map(row => ({

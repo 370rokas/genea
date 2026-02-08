@@ -3,11 +3,13 @@ import { NextResponse } from "next/server";
 export enum RateLimitEndpoint {
     SEND_MESSAGE = 1,
     SUBMIT_SOURCE_PROPOSAL = 2,
+    SEARCH_SOURCES = 3,
 }
 
 const rateLimitConfig: Record<RateLimitEndpoint, { allowed: number; duration: number }> = {
     [RateLimitEndpoint.SEND_MESSAGE]: { allowed: 3, duration: 60 }, // 3 requests per minute
     [RateLimitEndpoint.SUBMIT_SOURCE_PROPOSAL]: { allowed: 3, duration: 60 }, // 3 requests per minute
+    [RateLimitEndpoint.SEARCH_SOURCES]: { allowed: 60, duration: 60 }, // 1 request per second
 }
 
 const rateLimitData: Record<string, Record<RateLimitEndpoint, { count: number; lastReset: number }>> = {};

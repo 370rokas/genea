@@ -1,22 +1,15 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { SourceDisplayData } from "@/types";
+import { SearchSourcesResponseItem } from "@/types";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { MessageCircleIcon } from "lucide-react";
 import { Dialog, DialogPopup, DialogTrigger } from "../ui/dialog";
 import SourceReportForm from "./SourceReportForm";
-
-interface FilterSettings {
-    categoryId: string | null;
-    tagsIds?: number[] | null;
-    locationIds?: number[] | null;
-    text?: string;
-}
+import { useSourceTags, useLocations } from "@/hooks/dataFetching";
 
 interface SourceTableProps {
-    displayData: SourceDisplayData[];
-    filterSettings?: FilterSettings;
-};
+    displayData: SearchSourcesResponseItem[];
+}
 
 function ExpandableCell({
     children,
@@ -30,54 +23,31 @@ function ExpandableCell({
             {children}
         </div>
     );
-};
+}
 
-export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
+export function SourceTable({ displayData }: SourceTableProps) {
     const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
 
-    function shouldDisplayRow(item: SourceDisplayData): boolean {
-        if (filterSettings) {
-            // Category filter
-            if (filterSettings.categoryId && item.category.id.toString() !== filterSettings.categoryId) {
-                return false;
-            }
+    // Load tags and locations for ID-to-name mapping
+    const { data: tags } = useSourceTags();
+    const { data: locations } = useLocations();
 
-            // Tags filter: must contain any of the selected tag IDs
-            if (filterSettings.tagsIds && filterSettings.tagsIds.length > 0) {
-                const itemTagIds = item.tags.map(tag => tag.id);
-                const hasTag = filterSettings.tagsIds.some(tagId => itemTagIds.includes(tagId));
-                if (!hasTag) {
-                    console.log("Item tags:", itemTagIds);
-                    console.log("Filter tags:", filterSettings.tagsIds);
-                    return false;
-                } else {
-                    console.log("Item", item.id, "passed tag filter");
-                }
-            }
+    // Helper functions to map IDs to names
+    const getLocationNames = (locationIds: number[]) => {
+        if (!locations || !locationIds?.length) return "—";
+        return locationIds
+            .map(id => locations.find(loc => loc.id === id)?.name)
+            .filter(Boolean)
+            .join(", ") || "—";
+    };
 
-            // Location filter
-            if (filterSettings.locationIds && filterSettings.locationIds.length > 0) {
-                const itemLocationIds = item.locations.map(loc => loc.id);
-                const hasLocation = filterSettings.locationIds.some(locId => itemLocationIds.includes(locId));
-                if (!hasLocation) {
-                    return false;
-                }
-            }
-
-            // Text filter
-            if (filterSettings.text && filterSettings.text.trim() !== "") {
-                const lowerText = filterSettings.text.toLowerCase();
-                if (
-                    !item.title.toLowerCase().includes(lowerText) &&
-                    !item.description.toLowerCase().includes(lowerText)
-                ) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
+    const getTagNames = (tagIds: number[]) => {
+        if (!tags || !tagIds?.length) return "—";
+        return tagIds
+            .map(id => tags.find(tag => tag.id === id)?.name)
+            .filter(Boolean)
+            .join(", ") || "—";
+    };
 
     return (
         <Table className="w-full table-fixed">
@@ -93,12 +63,8 @@ export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
             </TableHeader>
 
             <TableBody>
-                {displayData.map((item: SourceDisplayData) => {
+                {displayData.map((item) => {
                     const expanded = expandedRowId === item.id;
-
-                    if (!shouldDisplayRow(item)) {
-                        return null;
-                    }
 
                     return (
                         <TableRow
@@ -107,12 +73,12 @@ export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
                                 setExpandedRowId(expanded ? null : item.id)
                             }
                             className={`
-                      align-top
-                      cursor-pointer
-                      transition-colors
-                      hover:bg-gray-50
-                      ${expanded ? "bg-gray-50" : ""}
-                    `}
+                                align-top
+                                cursor-pointer
+                                transition-colors
+                                hover:bg-gray-50
+                                ${expanded ? "bg-gray-50" : ""}
+                            `}
                         >
                             <TableCell className="overflow-hidden">
                                 <ExpandableCell expanded={expanded}>
@@ -128,21 +94,13 @@ export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
 
                             <TableCell className="overflow-hidden hidden xl:table-cell">
                                 <ExpandableCell expanded={expanded}>
-                                    {
-                                        item.locations
-                                            .map(loc => loc.name)
-                                            .join(", ")
-                                    }
+                                    {getLocationNames(item.location_ids)}
                                 </ExpandableCell>
                             </TableCell>
 
                             <TableCell className="overflow-hidden hidden xl:table-cell">
                                 <ExpandableCell expanded={expanded}>
-                                    {
-                                        item.tags
-                                            .map(tag => tag.name)
-                                            .join(", ")
-                                    }
+                                    {getTagNames(item.tag_ids)}
                                 </ExpandableCell>
                             </TableCell>
 
@@ -174,5 +132,5 @@ export function SourceTable({ displayData, filterSettings }: SourceTableProps) {
                 })}
             </TableBody>
         </Table>
-    )
-};
+    );
+}

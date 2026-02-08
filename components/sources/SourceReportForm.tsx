@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { DialogHeader, DialogTitle, DialogDescription, DialogPanel, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { SourceDisplayData } from "@/types";
+import { SearchSourcesResponseItem } from "@/types";
 import { submitFormReportSource } from "@/actions/reportSourceForm";
 import { schemaFormReportSource } from "@/lib/zodSchemas";
 
@@ -29,7 +29,7 @@ async function submitForm(event: FormEvent<HTMLFormElement>) {
 }
 
 interface SourceReportFormProps {
-    item: SourceDisplayData;
+    item: SearchSourcesResponseItem;
 }
 
 export default function SourceReportForm({ item }: SourceReportFormProps) {

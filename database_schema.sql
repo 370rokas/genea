@@ -2,6 +2,8 @@ DROP TRIGGER IF EXISTS location_path_update ON location;
 
 DROP TRIGGER IF EXISTS location_update_descendants ON location;
 
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 CREATE TABLE IF NOT EXISTS source_category(
     id bigserial PRIMARY KEY,
     name varchar(255) NOT NULL UNIQUE
@@ -31,8 +33,7 @@ CREATE TABLE IF NOT EXISTS source(
     title text NOT NULL,
     description text,
     link text,
-    category_id bigint REFERENCES source_category(id) ON DELETE SET NULL,
-    search_vector tsvector
+    category_id bigint REFERENCES source_category(id) ON DELETE SET NULL
 );
 
 ALTER TABLE source
@@ -98,24 +99,17 @@ CREATE TABLE IF NOT EXISTS audit_log(
     timestamp timestamptz NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_source_search_vector ON source USING GIN(search_vector);
-
 CREATE INDEX IF NOT EXISTS idx_audit_log_user_timestamp ON audit_log(user_id, timestamp);
 
-CREATE OR REPLACE FUNCTION source_tsv_trigger()
-    RETURNS TRIGGER
-    AS $$
-BEGIN
-    NEW.search_vector := setweight(to_tsvector('english', coalesce(NEW.title, '')), 'A') || setweight(to_tsvector('english', coalesce(NEW.description, '')), 'B');
-    RETURN NEW;
-END
-$$
-LANGUAGE plpgsql;
+-- 2. LITHUANIAN / DEFAULT INDEXES
+-- These speed up: WHERE title ILIKE $1 OR description ILIKE $1
+CREATE INDEX IF NOT EXISTS idx_source_title_trgm ON source USING GIN(title gin_trgm_ops);
 
-DROP TRIGGER IF EXISTS source_tsv_update ON source;
+CREATE INDEX IF NOT EXISTS idx_source_description_trgm ON source USING GIN(description gin_trgm_ops);
 
-CREATE TRIGGER source_tsv_update
-    BEFORE INSERT OR UPDATE ON source
-    FOR EACH ROW
-    EXECUTE FUNCTION source_tsv_trigger();
+-- 3. ENGLISH / FALLBACK FUNCTIONAL INDEXES
+-- These speed up: WHERE COALESCE(title_en, title) ILIKE $1
+CREATE INDEX IF NOT EXISTS idx_source_title_en_coalesce_trgm ON source USING GIN(COALESCE(title_en, title) gin_trgm_ops);
+
+CREATE INDEX IF NOT EXISTS idx_source_desc_en_coalesce_trgm ON source USING GIN(COALESCE(description_en, description) gin_trgm_ops);
 

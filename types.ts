@@ -97,6 +97,25 @@ export interface SourceProposal {
     submitted_at: string;
 }
 
+export interface SearchSourcesRequest {
+    query?: string;
+    category?: number;
+    locationIds?: number[];
+    tagIds?: number[];
+    lang: string;
+    page: number;
+}
+
+export interface SearchSourcesResponseItem {
+    id: number;
+    title: string;
+    description: string;
+    link: string;
+    category_id: number | null;
+    tag_ids: number[];
+    location_ids: number[];
+}
+
 export function hasPermission(
     userPerms: Permission[],
     required?: Permission
