@@ -8,6 +8,7 @@ import SourceReportForm from "./SourceReportForm";
 import { useSourceTags, useLocations } from "@/hooks/dataFetching";
 
 interface SourceTableProps {
+    className?: string;
     displayData: SearchSourcesResponseItem[];
 }
 
@@ -25,7 +26,7 @@ function ExpandableCell({
     );
 }
 
-export function SourceTable({ displayData }: SourceTableProps) {
+export function SourceTable({ className, displayData }: SourceTableProps) {
     const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
 
     // Load tags and locations for ID-to-name mapping
@@ -50,7 +51,7 @@ export function SourceTable({ displayData }: SourceTableProps) {
     };
 
     return (
-        <Table className="w-full table-fixed">
+        <Table className={`w-full table-fixed ${className}`}>
             <TableHeader>
                 <TableRow>
                     <TableHead className="w-[25%]">Pavadinimas</TableHead>

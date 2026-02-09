@@ -12,6 +12,7 @@ import { SearchSourcesRequest, SearchSourcesResponseItem } from "@/types";
 import { SourceTable } from "@/components/sources/SourceTable";
 import CategorySelector from "@/components/admin/categorySelector";
 import TagSelector from "@/components/search/tagSelector";
+import MobileSourceView from "@/components/sources/SourceMobileView";
 
 function doSearch(params: SearchSourcesRequest): Promise<SearchSourcesResponseItem[]> {
     const searchParams = new URLSearchParams();
@@ -91,7 +92,7 @@ export default function SourcesPage() {
     const allSources = data?.pages.flat() ?? [];
 
     return (
-        <main className="flex min-h-screen flex-col items-center pt-12 px-24 bg-gray-200">
+        <main className="flex min-h-screen flex-col items-center pt-2 px-2 md:pt-12 md:px-24 bg-gray-200">
             {/* Paieška */}
             <div className="flex w-full flex-col gap-4 mb-8">
                 <CategorySelector
@@ -165,6 +166,12 @@ export default function SourcesPage() {
                 ) : (
                     <>
                         <SourceTable
+                            className="hidden md:table"
+                            displayData={allSources}
+                        />
+
+                        <MobileSourceView
+                            className="table md:hidden"
                             displayData={allSources}
                         />
 
