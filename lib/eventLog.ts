@@ -11,12 +11,15 @@ export enum EventType {
     CREATE_SOURCE_CATEGORY = "create_source_category",
     CREATE_SOURCE_TAG = "create_source_tag",
 
+    EDIT_SOURCE = "edit_source",
+    EDIT_LOCATION = "edit_location",
+
+    DELETE_LOCATION = "delete_location",
+
     APPROVE_SOURCE_PROPOSAL = "approve_source_proposal",
     REMOVE_SOURCE_PROPOSAL = "remove_source_proposal",
 
     PUSH_EMAILS = "push_emails",
-
-    EDIT_SOURCE = "edit_source",
 };
 
 interface LogEventProps {

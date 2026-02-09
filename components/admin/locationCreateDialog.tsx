@@ -22,7 +22,7 @@ export default function CreateLocationDialog() {
         const name = formData.get("name")
 
         try {
-            const response = await fetch("/api/admin/locations/create", {
+            const response = await fetch("/api/admin/location", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

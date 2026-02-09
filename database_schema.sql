@@ -113,3 +113,21 @@ CREATE INDEX IF NOT EXISTS idx_source_title_en_coalesce_trgm ON source USING GIN
 
 CREATE INDEX IF NOT EXISTS idx_source_desc_en_coalesce_trgm ON source USING GIN(COALESCE(description_en, description) gin_trgm_ops);
 
+-- -- Optional Grafana Account stuff, can be run if needed
+-- do
+-- $$
+-- begin
+--   if not exists (select * from pg_user where usename = 'grafanareader') then
+--      CREATE USER grafanareader WITH PASSWORD 'grafana';
+--   end if;
+-- end
+-- $$;
+-- GRANT USAGE ON SCHEMA public TO grafanareader;
+-- GRANT SELECT ON public.event_log TO grafanareader;
+-- GRANT SELECT ON public.location TO grafanareader;
+-- GRANT SELECT ON public.source TO grafanareader;
+-- GRANT SELECT ON public.source_category TO grafanareader;
+-- GRANT SELECT ON public.source_submission TO grafanareader;
+-- GRANT SELECT ON public.source_tag TO grafanareader;
+-- GRANT SELECT ON public.user_message TO grafanareader;
+-- GRANT SELECT ON public.app_user TO grafanareader;

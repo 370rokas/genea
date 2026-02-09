@@ -275,7 +275,7 @@ export const createSourceSubmission = async (title: string, description: string,
     }
 };
 
-export const createLocation = async (name: string, parentId?: number): Promise<{ id: number, name: string }> => {
+export const createLocation = async (name: string, parentId?: number | null): Promise<{ id: number | null, name: string }> => {
     try {
         const id = await pool.query(
             'INSERT INTO location (name, parent_id) VALUES ($1, $2) RETURNING id',
