@@ -5,67 +5,135 @@ import Topbar from "@/components/topbar";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Check, Circle } from "lucide-react";
+import { Users, ExternalLink, HelpCircle } from "lucide-react";
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-[#f3f4f6]">
       <Topbar />
 
-      <main className="relative flex-1 max-w-4xl mx-auto w-full pt-20 px-6 pb-24">
+      <main className="relative flex-1 max-w-6xl mx-auto w-full pt-20 px-6 pb-24">
         <section className="text-center mb-16 space-y-6">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900">
             Sveiki atvykę į <span className="text-blue-600">Genea</span>
           </h1>
 
           <p className="text-xl text-gray-700 max-w-xl mx-auto leading-relaxed font-medium">
-            genealoginių šaltinių duombazę
+            genealoginių šaltinių duomenų bazę
           </p>
 
           <div className="flex items-center justify-center gap-4 pt-4">
-            <Button size="lg" className="h-12 px-10 shadow-md" render={<Link href="/saltiniai">Peržiūrėti šaltinius</Link>} />
-            <Button variant="outline" size="lg" className="h-12 px-10 bg-white border-gray-300 text-gray-700 hover:bg-gray-50" render={<Link href="/saltiniai/naujas">Pridėti naują</Link>} />
+            <Link href="/saltiniai">
+              <Button size="lg" className="h-12 px-10 shadow-md">
+                Peržiūrėti šaltinius
+              </Button>
+            </Link>
+            <Link href="/saltiniai/naujas">
+              <Button variant="outline" size="lg" className="h-12 px-10 bg-white border-gray-300 text-gray-700 hover:bg-gray-50">
+                Pridėti naują
+              </Button>
+            </Link>
           </div>
         </section>
 
-        {/* Status Card */}
-        <Card className="overflow-hidden border-none shadow-2xl bg-white">
-          <div className="p-8 md:p-10">
-            <h3 className="text-sm font-black uppercase tracking-[0.15em] text-gray-500 mb-6">
-              Funkcionalumų įgyvendinimas:
-            </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
 
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FeatureItem checked label="Šaltinių peržiūra ir valdymas" />
-              <FeatureItem checked label="Dubliavimosi tikrinimas" />
-              <FeatureItem label="DUK sekcija, kanalas atgaliniam ryšiui" />
-              <FeatureItem label="Kategorijų ir žymų valdymas" />
-              <FeatureItem label="Angliška vartotojo sąsaja" />
-              <FeatureItem label="Automatinis nuorodų būsenos tikrinimas" />
-            </ul>
-          </div>
-        </Card>
+          {/* FAQ */}
+          <section className="space-y-6">
+            <div className="flex items-center gap-2 mb-2">
+              <HelpCircle className="w-5 h-5 text-blue-600" />
+              <h2 className="text-2xl font-bold text-gray-900">Dažniausiai užduodami klausimai</h2>
+            </div>
+
+            <div className="space-y-4">
+              <FAQItem
+                question="Kaip naudotis paieška?"
+                answer="Ieškoti šaltinius galima atsidarius šaltinių sąrašą. Galima filtruoti pagal kategoriją, ieškoti pagal tekstą, arba paspaudus Rodyti filtrus, filtruoti pagal žymas ir vietovę."
+              />
+              <FAQItem
+                question="Kaip pridėti naują įrašą?"
+                answer={`Norėdami pridėti naują šaltinį, paspauskite mygtuką „Pridėti šaltinį" viršuje.`}
+              />
+            </div>
+          </section>
+
+          {/* FB Grupės */}
+          <section className="space-y-6">
+            <div className="flex items-center gap-2 mb-2">
+              <Users className="w-5 h-5 text-blue-600" />
+              <h2 className="text-2xl font-bold text-gray-900">Bendruomenės</h2>
+            </div>
+
+            <div className="grid gap-4">
+              <GroupCard
+                name="Domiuosi genealogija"
+                url="https://www.facebook.com/groups/domiuosigenealogija/"
+                description="Didžiausia Lietuvos genealogijos entuziastų grupė diskusijoms ir pagalbai."
+              />
+            </div>
+
+            <div className="grid gap-4">
+              <GroupCard
+                name="Sūduvos - Suvalkijos - Užnemunės genealogija"
+                url="https://www.facebook.com/groups/370198376688363"
+                description="Genealogijos tyrinėtojams ir entuziastams, ieškantiems savo protėvių šaknų Sūduvoje / Užnemunėje / Suvalkijoje."
+              />
+            </div>
+
+            <div className="grid gap-4">
+              <GroupCard
+                name="Lietuvos Liuteronų Genealogija"
+                url="https://www.facebook.com/groups/LiuteronuGenealogija"
+                description="Lietuvos liuteronų genealogijos grupė, skirta dalintis informacija ir tyrinėti liuteronų protėvius Lietuvoje."
+              />
+            </div>
+
+            <div className="grid gap-4">
+              <GroupCard
+                name="Senos nuotraukos. Genealogija"
+                url="https://www.facebook.com/groups/293447049894656"
+                description="Grupė skirta besidomintiems genealogija dalintis savo archyvuose esančiomis senomis, istorinėmis nuotraukomis, siekiant padėti vieni kitiems rasti ieškomų giminaičių atvaizdus."
+              />
+            </div>
+          </section>
+        </div>
       </main>
       <Footer />
     </div>
   );
 }
 
-function FeatureItem({ label, checked = false }: { label: string; checked?: boolean }) {
+function FAQItem({ question, answer }: { question: string; answer: string }) {
   return (
-    <li className={`flex items-center gap-4 p-4 rounded-xl border transition-all duration-200
-      ${checked
-        ? 'bg-white border-blue-100 shadow-sm text-gray-900'
-        : 'bg-gray-100/50 border-transparent text-gray-500 italic'}`}>
+    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+      <h4 className="font-bold text-gray-900 mb-2">{question}</h4>
+      <p className="text-gray-600 text-sm leading-relaxed">{answer}</p>
+    </div>
+  );
+}
 
-      <div className={`flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full shadow-inner
-        ${checked ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-400'}`}>
-        {checked ? <Check className="w-4 h-4" strokeWidth={3} /> : <Circle className="w-3 h-3 fill-current" />}
+function GroupCard({ name, url, description }: { name: string; url: string; description: string }) {
+  return (
+    <Card className="p-6 border-none shadow-lg hover:shadow-xl transition-shadow bg-white group">
+      <div className="flex items-start justify-between">
+        <div className="space-y-2">
+          <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+            Facebook Grupė
+          </div>
+          <h3 className="text-lg font-bold text-gray-900">{name}</h3>
+          <p className="text-sm text-gray-600 leading-snug">
+            {description}
+          </p>
+        </div>
       </div>
 
-      <span className="text-[15px] font-semibold tracking-tight">
-        {label}
-      </span>
-    </li>
+      <Button
+        render={<a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
+          Prisijungti prie grupės
+          <ExternalLink className="w-4 h-4" />
+        </a>}
+        className="w-full bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold"
+      />
+    </Card>
   );
 }

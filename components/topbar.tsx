@@ -13,10 +13,10 @@ export default function Topbar() {
 
                 <nav className="flex space-x-4">
                     <Link href="/saltiniai" passHref>
-                        <Button variant="ghost">Šaltinių Sąrašas</Button>
+                        <Button variant="ghost">Šaltinių sąrašas</Button>
                     </Link>
                     <Link href="/saltiniai/naujas" passHref>
-                        <Button variant="ghost">Pridėti Šaltinį</Button>
+                        <Button variant="ghost">Pridėti šaltinį</Button>
                     </Link>
                 </nav>
             </div>
