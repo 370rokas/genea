@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Field, FieldLabel } from "@/components/ui/field";
 
 interface LocationsTableProps {
     locationData: LocationData[];

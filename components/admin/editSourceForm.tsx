@@ -11,21 +11,35 @@ import { LocationSelector } from '@/components/search/LocationSelector';
 import { Textarea } from '@/components/ui/textarea';
 import CategorySelector from './categorySelector';
 
-export function EditSourceForm({ startingData }: { startingData: FullSourceData }) {
+interface FormSubmitData {
+    title: string;
+    title_en?: string;
+    description: string;
+    description_en?: string;
+    link: string;
+    category_id: number | null;
+    tag_ids: number[];
+    location_ids: number[];
+}
+
+interface SourceFormProps {
+    startingData: FullSourceData | null;
+    onSubmit(data: FormSubmitData): void;
+    submitButtonText?: string;
+}
+
+export function EditSourceForm({ startingData, onSubmit, submitButtonText }: SourceFormProps) {
     const [selectedTagIds, setSelectedTagIds] = useState<number[]>(
-        startingData.tags?.map(t => t.id) || []
+        startingData?.tags?.map(t => t.id) || []
     );
 
     const [selectedLocationIds, setSelectedLocationIds] = useState<string[]>(
-        startingData.locations?.map(l => l.id.toString()) || []
+        startingData?.locations?.map(l => l.id.toString()) || []
     );
 
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-        startingData.category_id ? parseInt(startingData.category_id) : null // @ts-ignore
+        startingData?.category_id ? parseInt(startingData.category_id) : null // @ts-ignore
     );
-
-    console.log("Selected category ID:", selectedCategoryId);
-    console.log(startingData)
 
     const [isSaving, setIsSaving] = useState(false);
 
@@ -38,29 +52,12 @@ export function EditSourceForm({ startingData }: { startingData: FullSourceData 
             tag_ids: selectedTagIds,
             location_ids: selectedLocationIds.map(id => parseInt(id)),
             category_id: selectedCategoryId ?? null,
-            id: startingData.id
         };
 
         setIsSaving(true);
-
-        fetch("/api/admin/sources/editSource", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(finalData)
-        }).then(res => {
-            if (res.ok) {
-                alert("Šaltinis sėkmingai atnaujintas!");
-            } else {
-                alert("Klaida atnaujinant šaltinį.");
-            }
-        }).catch(() => {
-            alert("Klaida atnaujinant šaltinį.");
-        }).finally(() => {
-            setIsSaving(false);
-            window.location.reload();
-        });
+        // @ts-expect-error
+        onSubmit(finalData);
+        setIsSaving(false);
     }
 
     return (
@@ -68,27 +65,27 @@ export function EditSourceForm({ startingData }: { startingData: FullSourceData 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field>
                     <FieldLabel htmlFor="title">Pavadinimas</FieldLabel>
-                    <Input id="title" name="title" defaultValue={startingData.title} disabled={isSaving} />
+                    <Input id="title" name="title" defaultValue={startingData?.title} disabled={isSaving} required />
                 </Field>
                 <Field>
                     <FieldLabel htmlFor="title_en">Pavadinimas (EN)</FieldLabel>
-                    <Input id="title_en" name="title_en" defaultValue={startingData.title_en || ""} disabled={isSaving} />
+                    <Input id="title_en" name="title_en" defaultValue={startingData?.title_en || ""} disabled={isSaving} />
                 </Field>
             </div>
 
             <Field>
                 <FieldLabel htmlFor="description">Aprašymas</FieldLabel>
-                <Textarea id="description" name="description" defaultValue={startingData.description} disabled={isSaving} />
+                <Textarea id="description" name="description" defaultValue={startingData?.description} disabled={isSaving} required />
             </Field>
 
             <Field>
                 <FieldLabel htmlFor="description_en">Aprašymas (EN)</FieldLabel>
-                <Textarea id="description_en" name="description_en" defaultValue={startingData.description_en || ""} disabled={isSaving} />
+                <Textarea id="description_en" name="description_en" defaultValue={startingData?.description_en || ""} disabled={isSaving} />
             </Field>
 
             <Field>
                 <FieldLabel htmlFor="link">Nuoroda</FieldLabel>
-                <Input id="link" name="link" defaultValue={startingData.link} disabled={isSaving} />
+                <Input id="link" name="link" defaultValue={startingData?.link} disabled={isSaving} />
             </Field>
 
             <Field>
@@ -118,7 +115,7 @@ export function EditSourceForm({ startingData }: { startingData: FullSourceData 
             </div>
 
             <div className="flex justify-end pt-4 border-t">
-                <Button type="submit" size="lg" disabled={isSaving}>Išsaugoti visus pakeitimus</Button>
+                <Button type="submit" size="lg" disabled={isSaving}>{submitButtonText || "Išsaugoti visus pakeitimus"}</Button>
             </div>
         </Form>
     );

@@ -26,6 +26,11 @@ import { ArrowLeft, SearchIcon, SquarePenIcon } from 'lucide-react';
 import { Group, GroupSeparator, GroupText } from '@/components/ui/group';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { useAdminSourceListings } from '@/hooks/dataFetching';
+import { Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogPanel, DialogPopup, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Form } from '@/components/ui/form';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { EditSourceForm } from '@/components/admin/editSourceForm';
 
 export default function SourceView() {
     const { data: sources, isLoading: sourcesLoading } = useAdminSourceListings();
@@ -194,6 +199,31 @@ export default function SourceView() {
                         )}
                     </TableBody>
                 </Table>
+            </div>
+
+            <div className="flex items-center justify-end mt-4 gap-2">
+                <Dialog>
+                    <DialogTrigger render={<Button />}>
+                        Sukurti Naują
+                    </DialogTrigger>
+                    <DialogPopup className="sm:max-w-sm">
+                        <DialogHeader>
+                            <DialogTitle>Naujo šaltinio kūrimas</DialogTitle>
+                        </DialogHeader>
+                        <DialogPanel className="grid gap-4">
+                            <EditSourceForm onSubmit={(data) => {
+                                console.log("Creating new source:");
+                                console.log(data);
+                            }} startingData={null} />
+                        </DialogPanel>
+                        <DialogFooter>
+                            <DialogClose render={<Button variant="ghost" />}>
+                                Cancel
+                            </DialogClose>
+                            <Button type="submit">Save</Button>
+                        </DialogFooter>
+                    </DialogPopup>
+                </Dialog>
             </div>
         </div>
     );
