@@ -212,15 +212,34 @@ export default function SourceView() {
                         </DialogHeader>
                         <DialogPanel className="grid gap-4">
                             <EditSourceForm onSubmit={(data) => {
-                                console.log("Creating new source:");
                                 console.log(data);
+
+                                fetch("/api/admin/sources", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify(data)
+                                }).then(res => {
+                                    if (res.ok) {
+                                        return res.json();
+                                    } else {
+                                        throw new Error("Failed to create source");
+                                    }
+                                }).then((resData) => {
+                                    console.log("Source created with ID:", resData.id);
+                                    window.location.reload();
+                                }).catch(err => {
+                                    console.error("Error creating source:", err);
+                                    alert("Klaida kuriant šaltinį. Patikrinkite konsolę.");
+                                });
+
                             }} startingData={null} />
                         </DialogPanel>
                         <DialogFooter>
                             <DialogClose render={<Button variant="ghost" />}>
-                                Cancel
+                                Uždaryti
                             </DialogClose>
-                            <Button type="submit">Save</Button>
                         </DialogFooter>
                     </DialogPopup>
                 </Dialog>

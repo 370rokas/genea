@@ -11,7 +11,7 @@ import { LocationSelector } from '@/components/search/LocationSelector';
 import { Textarea } from '@/components/ui/textarea';
 import CategorySelector from './categorySelector';
 
-interface FormSubmitData {
+export interface FormSubmitData {
     title: string;
     title_en?: string;
     description: string;
@@ -115,7 +115,7 @@ export function EditSourceForm({ startingData, onSubmit, submitButtonText }: Sou
             </div>
 
             <div className="flex justify-end pt-4 border-t">
-                <Button type="submit" size="lg" disabled={isSaving}>{submitButtonText || "Išsaugoti visus pakeitimus"}</Button>
+                <Button type="submit" size="lg" disabled={isSaving}>{submitButtonText || "Sukurti šaltinį"}</Button>
             </div>
         </Form>
     );

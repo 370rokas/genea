@@ -6,16 +6,21 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Users, ExternalLink, HelpCircle } from "lucide-react";
+import TreeSVG from "@/components/icons/tree";
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-[#f3f4f6]">
       <Topbar />
 
-      <main className="relative flex-1 max-w-6xl mx-auto w-full pt-20 px-6 pb-24">
+      <main className="relative flex-1 max-w-6xl mx-auto w-full pt-5 px-6 pb-24">
+        <div className="flex justify-center mb-4">
+          <TreeSVG width={250} height={250} />
+        </div>
         <section className="text-center mb-16 space-y-6">
+
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900">
-            Sveiki atvykę į <span className="text-blue-600">Genea</span>
+            Sveiki atvykę į <span className="text-emerald-600">Genea</span>
           </h1>
 
           <p className="text-xl text-gray-700 max-w-xl mx-auto leading-relaxed font-medium">
@@ -132,7 +137,7 @@ function GroupCard({ name, url, description }: { name: string; url: string; desc
           Prisijungti prie grupės
           <ExternalLink className="w-4 h-4" />
         </a>}
-        className="w-full bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold"
+        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
       />
     </Card>
   );

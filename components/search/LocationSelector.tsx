@@ -75,12 +75,12 @@ export function LocationSelector({ selectedLocations, setSelectedLocations, clas
                 {selectedLocations.map((location) => (
                     <div
                         key={location}
-                        className="flex-shrink-0 flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800 max-w-full"
+                        className="flex-shrink-0 flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-sm text-emerald-800 max-w-full"
                     >
                         <span className="truncate max-w-full">{getNameFromId(location)}</span>
                         <button
                             type="button"
-                            className="text-blue-500 hover:text-blue-700 focus:outline-none"
+                            className="text-emerald-600 hover:text-emerald-700 focus:outline-none"
                             onClick={() => {
                                 setSelectedLocations(selectedLocations.filter((loc) => loc !== location));
                             }}
