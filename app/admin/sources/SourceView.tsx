@@ -27,9 +27,6 @@ import { Group, GroupSeparator, GroupText } from '@/components/ui/group';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { useAdminSourceListings } from '@/hooks/dataFetching';
 import { Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogPanel, DialogPopup, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Form } from '@/components/ui/form';
-import { Field, FieldLabel } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
 import { EditSourceForm } from '@/components/admin/editSourceForm';
 
 export default function SourceView() {

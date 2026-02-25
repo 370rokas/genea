@@ -18,8 +18,8 @@ export async function createUserMessage(message: string, reply_to: string | null
     const headerList = await headers();
     const ip = getIP(headerList);
 
-    const shouldLimit = checkRateLimit(ip, RateLimitEndpoint.SEND_MESSAGE);
-    if (shouldLimit) {
+    const isAllowed = checkRateLimit(ip, RateLimitEndpoint.SEND_MESSAGE);
+    if (!isAllowed) {
         return Promise.reject(returnLimitedResponse());
     }
 
@@ -29,4 +29,30 @@ export async function createUserMessage(message: string, reply_to: string | null
     );
 
     return res.rows[0] as UserMessage;
+}
+
+export async function getUnhandledMessages(): Promise<UserMessage[]> {
+    const res = await pool.query(
+        "SELECT id, message, reply_to, related_source_id, handled, created_at FROM user_message WHERE handled = FALSE ORDER BY created_at DESC"
+    );
+    return res.rows as UserMessage[];
+}
+
+export async function getHandledMessages(page: number = 1, pageSize: number = 20): Promise<{ messages: UserMessage[]; total: number }> {
+    const offset = (page - 1) * pageSize;
+    const res = await pool.query(
+        "SELECT id, message, reply_to, related_source_id, handled, created_at FROM user_message WHERE handled = TRUE ORDER BY created_at DESC LIMIT $1 OFFSET $2",
+        [pageSize, offset]
+    );
+    const countRes = await pool.query(
+        "SELECT COUNT(*) FROM user_message WHERE handled = TRUE"
+    );
+    return { messages: res.rows as UserMessage[], total: parseInt(countRes.rows[0].count) };
+}
+
+export async function markMessageAsHandled(messageId: number) {
+    await pool.query(
+        "UPDATE user_message SET handled = TRUE WHERE id = $1",
+        [messageId]
+    );
 }

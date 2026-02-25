@@ -79,7 +79,8 @@ export const PERMISSIONS = [
     "SUDO",
     "MANAGE_USERS",
     "MANAGE_SOURCES",
-    "MANAGE_LOCATIONS"
+    "MANAGE_LOCATIONS",
+    "MANAGE_MESSAGES"
 ] as const;
 
 export type Permission = typeof PERMISSIONS[number];
