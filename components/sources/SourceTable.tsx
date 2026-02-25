@@ -36,8 +36,9 @@ export function SourceTable({ className, displayData }: SourceTableProps) {
     // Helper functions to map IDs to names
     const getLocationNames = (locationIds: number[]) => {
         if (!locations || !locationIds?.length) return "—";
+
         return locationIds
-            .map(id => locations.find(loc => loc.id === id)?.name)
+            .map(id => locations.find(loc => loc.id == id)?.name)
             .filter(Boolean)
             .join(", ") || "—";
     };
