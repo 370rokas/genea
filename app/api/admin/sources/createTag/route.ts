@@ -1,6 +1,7 @@
 import { authOptions } from "@/lib/security/auth";
 import { createTag } from "@/lib/db";
-import { EventType, logEvent } from "@/lib/eventLog";
+import { logEvent } from "@/lib/eventLog";
+import { EventType } from "@/types/api";
 import logger from "@/lib/logger";
 import { hasPermission } from "@/types";
 import { getServerSession } from "next-auth/next";

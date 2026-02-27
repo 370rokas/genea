@@ -3,7 +3,8 @@ import Credentials from "next-auth/providers/credentials";
 import { pool } from "@/lib/db";
 import { Permission } from "@/types";
 import bcrypt from "bcryptjs";
-import { EventType, logEvent } from "@/lib/eventLog";
+import { logEvent } from "@/lib/eventLog";
+import { EventType } from "@/types/api";
 
 export const authOptions: NextAuthOptions = {
     providers: [

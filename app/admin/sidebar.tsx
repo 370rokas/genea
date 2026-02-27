@@ -6,7 +6,7 @@ import { hasPermission, Permission } from "@/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { BookOpenText, Globe2Icon, MessagesSquareIcon, User2Icon } from "lucide-react";
+import { BookOpenIcon, BookOpenText, Globe2Icon, MessagesSquareIcon, User2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 type SidebarItem = {
@@ -44,6 +44,12 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
         href: "/admin/messages",
         permission: "MANAGE_MESSAGES",
         icon: MessagesSquareIcon
+    },
+    {
+        label: "Auditas",
+        href: "/admin/audit",
+        permission: "SUDO",
+        icon: BookOpenIcon
     }
 ];
 

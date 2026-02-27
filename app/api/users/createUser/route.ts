@@ -3,7 +3,8 @@ import { authOptions } from "@/lib/security/auth";
 import { pool } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { hasPermission } from "@/types";
-import { EventType, logEvent } from "@/lib/eventLog";
+import { logEvent } from "@/lib/eventLog";
+import { EventType } from "@/types/api";
 import logger from "@/lib/logger";
 
 export async function POST(req: Request) {

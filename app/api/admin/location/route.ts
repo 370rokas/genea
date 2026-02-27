@@ -1,7 +1,8 @@
 import { createLocation, pool } from "@/lib/db";
-import { EventType, logEvent } from "@/lib/eventLog";
+import { logEvent } from "@/lib/eventLog";
 import { authOptions } from "@/lib/security/auth";
 import { hasPermission } from "@/types";
+import { EventType } from "@/types/api";
 import { getServerSession } from "next-auth";
 
 interface CreateLocationBody {

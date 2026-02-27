@@ -1,6 +1,6 @@
 "use client";
 
-import { SourceCategory, SourceDisplayData, SourceTag, LocationData, SourceProposal, AdminSourceListing } from "@/types";
+import { SourceCategory, SourceDisplayData, SourceTag, LocationData, SourceProposal, AdminSourceListing, UserData } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 
 async function fetchTags(): Promise<SourceTag[]> {
@@ -43,6 +43,20 @@ async function fetchAdminSourceListings(): Promise<AdminSourceListing[]> {
   const res = await fetch('/api/admin/sources/list');
   if (!res.ok) throw new Error('Failed to fetch admin source listings');
   return res.json();
+}
+
+async function fetchAdminUserList(): Promise<UserData[]> {
+  const res = await fetch('/api/users/getAllUsers');
+  if (!res.ok) throw new Error('Failed to fetch admin user list');
+  return res.json();
+}
+
+export function useAdminUserList() {
+  return useQuery({
+    queryKey: ['adminUserList'],
+    queryFn: fetchAdminUserList,
+    staleTime: 1000 * 60 * 10, // 10 minutes
+  });
 }
 
 export function useAdminSourceListings() {

@@ -1,6 +1,7 @@
 import { authOptions } from "@/lib/security/auth";
 import { pool } from "@/lib/db";
-import { EventType, logEvent } from "@/lib/eventLog";
+import { logEvent } from "@/lib/eventLog";
+import { EventType } from "@/types/api";
 import { ApproveSourceBody, hasPermission } from "@/types";
 import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";

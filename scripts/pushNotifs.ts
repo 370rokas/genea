@@ -1,4 +1,5 @@
-import { EventType, logEvent } from "@/lib/eventLog";
+import { logEvent } from "@/lib/eventLog";
+import { EventType } from "@/types/api";
 import { pushNotifTask } from "@/lib/notifs";
 
 pushNotifTask()

@@ -180,7 +180,7 @@ export default function SourceView() {
     }
 
     return (
-        <div className="w-full table-fixed pb-4">
+        <div className="flex flex-col h-full overflow-hidden table-fixed pb-4">
             <div className="flex items-center justify-between gap-4 mb-5">
                 <Group className='max-w-sm w-full'>
                     <InputGroup>
@@ -264,7 +264,7 @@ export default function SourceView() {
                     <DialogTrigger render={<Button />}>
                         Sukurti Naują
                     </DialogTrigger>
-                    <DialogPopup className="sm:max-w-sm">
+                    <DialogPopup className="sm:max-w-2xl">
                         <DialogHeader>
                             <DialogTitle>Naujo šaltinio kūrimas</DialogTitle>
                         </DialogHeader>

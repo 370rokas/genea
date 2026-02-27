@@ -3,7 +3,8 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/security/auth";
 import { pool } from "@/lib/db";
 import bcrypt from "bcryptjs";
-import { EventType, logEvent } from "@/lib/eventLog";
+import { logEvent } from "@/lib/eventLog";
+import { EventType } from "@/types/api";
 import logger from "@/lib/logger";
 
 export async function POST(request: Request) {

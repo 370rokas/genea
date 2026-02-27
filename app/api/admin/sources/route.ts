@@ -1,6 +1,7 @@
 import { FormSubmitData } from "@/components/admin/editSourceForm";
 import { pool } from "@/lib/db";
-import { EventType, logEvent } from "@/lib/eventLog";
+import { logEvent } from "@/lib/eventLog";
+import { EventType } from "@/types/api";
 import { authOptions } from "@/lib/security/auth";
 import { hasPermission } from "@/types";
 import { getServerSession } from "next-auth/next";
