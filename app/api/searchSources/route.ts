@@ -73,7 +73,7 @@ function buildSearchQuery(params: SearchSourcesRequest): { query: string; args: 
 
         WHERE ${filterQuery}
 
-        ORDER BY s.id ASC
+        ORDER BY s.created_at DESC, s.id DESC
         LIMIT ${pageSize} OFFSET ${pageOffset}
     `;
 

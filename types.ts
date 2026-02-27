@@ -41,6 +41,9 @@ export interface AdminSourceListing {
     id: number;
     title: string;
     description: string;
+    category_id: number | null;
+    tag_ids: number[];
+    location_ids: number[];
     state: SourceState;
 };
 

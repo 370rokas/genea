@@ -5,11 +5,18 @@ import { Button } from "../ui/button";
 import { MessageCircleIcon } from "lucide-react";
 import { Dialog, DialogPopup, DialogTrigger } from "../ui/dialog";
 import SourceReportForm from "./SourceReportForm";
-import { useSourceTags, useLocations } from "@/hooks/dataFetching";
+import { useSourceTags, useLocations, useSourceCategories } from "@/hooks/dataFetching";
+
+interface HighlightSettings {
+    textQuery?: string;
+    tagIds?: number[];
+    locationIds?: number[];
+}
 
 interface SourceTableProps {
     className?: string;
     displayData: SearchSourcesResponseItem[];
+    highlightSettings?: HighlightSettings;
 }
 
 function ExpandableCell({
@@ -26,37 +33,21 @@ function ExpandableCell({
     );
 }
 
-export function SourceTable({ className, displayData }: SourceTableProps) {
+export function SourceTable({ className, displayData, highlightSettings }: SourceTableProps) {
     const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
 
     // Load tags and locations for ID-to-name mapping
     const { data: tags } = useSourceTags();
     const { data: locations } = useLocations();
-
-    // Helper functions to map IDs to names
-    const getLocationNames = (locationIds: number[]) => {
-        if (!locations || !locationIds?.length) return "—";
-
-        return locationIds
-            .map(id => locations.find(loc => loc.id == id)?.name)
-            .filter(Boolean)
-            .join(", ") || "—";
-    };
-
-    const getTagNames = (tagIds: number[]) => {
-        if (!tags || !tagIds?.length) return "—";
-        return tagIds
-            .map(id => tags.find(tag => tag.id === id)?.name)
-            .filter(Boolean)
-            .join(", ") || "—";
-    };
+    const { data: categories } = useSourceCategories();
 
     return (
         <Table className={`w-full table-fixed ${className}`}>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-[25%]">Pavadinimas</TableHead>
-                    <TableHead className="w-[40%]">Aprašymas</TableHead>
+                    <TableHead className="w-[20%]">Pavadinimas</TableHead>
+                    <TableHead className="w-[35%]">Aprašymas</TableHead>
+                    <TableHead className="w-[10%] hidden xl:table-cell">Kategorija</TableHead>
                     <TableHead className="w-[10%] hidden xl:table-cell">Vietovardžiai</TableHead>
                     <TableHead className="w-[10%] hidden xl:table-cell">Žymos</TableHead>
                     <TableHead className="w-[10%]">Nuoroda</TableHead>
@@ -96,13 +87,51 @@ export function SourceTable({ className, displayData }: SourceTableProps) {
 
                             <TableCell className="overflow-hidden hidden xl:table-cell">
                                 <ExpandableCell expanded={expanded}>
-                                    {getLocationNames(item.location_ids)}
+                                    {item.category_id && categories ? (
+                                        categories.find(cat => cat.id === item.category_id)?.name || "—"
+                                    ) : "—"}
                                 </ExpandableCell>
                             </TableCell>
 
                             <TableCell className="overflow-hidden hidden xl:table-cell">
                                 <ExpandableCell expanded={expanded}>
-                                    {getTagNames(item.tag_ids)}
+                                    {item.location_ids && locations ? (
+                                        item.location_ids
+                                            .map(id => locations.find(loc => loc.id == id)?.name)
+                                            .filter(Boolean)
+                                            .map((name, index) => (
+                                                <span key={index}>
+                                                    {highlightSettings?.locationIds?.includes(item.location_ids[index]) ? (
+                                                        <span className="bg-yellow-200">{name}</span>
+                                                    ) : (
+                                                        name
+                                                    )}
+                                                    {index < item.location_ids.length - 1 && ", "}
+                                                </span>
+                                            ))
+                                    ) : "—"}
+                                </ExpandableCell>
+                            </TableCell>
+
+                            <TableCell className="overflow-hidden hidden xl:table-cell">
+                                <ExpandableCell expanded={expanded}>
+                                    {item.tag_ids && tags ? (
+                                        item.tag_ids
+                                            .map(id => tags.find(tag => tag.id === id)?.name)
+                                            .filter(Boolean)
+                                            .map((name, index) => (
+                                                <span key={index}>
+                                                    {highlightSettings?.tagIds?.includes(item.tag_ids[index]) ? (
+                                                        <span className="bg-yellow-200">{name}</span>
+                                                    ) : (
+                                                        name
+                                                    )}
+                                                    {index < item.tag_ids.length - 1 && ", "}
+                                                </span>
+                                            ))
+                                    ) : (
+                                        "—"
+                                    )}
                                 </ExpandableCell>
                             </TableCell>
 

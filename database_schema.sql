@@ -33,8 +33,11 @@ CREATE TABLE IF NOT EXISTS source(
     title text NOT NULL,
     description text,
     link text,
-    category_id bigint REFERENCES source_category(id) ON DELETE SET NULL
+    category_id bigint REFERENCES source_category(id) ON DELETE SET NULL,
 );
+
+ALTER TABLE source
+    ADD COLUMN IF NOT EXISTS created_at timestamptz NOT NULL DEFAULT NOW();
 
 ALTER TABLE source
     ADD COLUMN IF NOT EXISTS title_en text;

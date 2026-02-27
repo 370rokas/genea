@@ -168,6 +168,11 @@ export default function SourcesPage() {
                         <SourceTable
                             className="hidden md:table"
                             displayData={allSources}
+                            highlightSettings={{
+                                textQuery: filterText,
+                                tagIds: selectedTags,
+                                locationIds: selectedLocations.map(loc => Number(loc)),
+                            }}
                         />
 
                         <MobileSourceView

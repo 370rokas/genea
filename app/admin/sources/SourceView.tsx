@@ -25,12 +25,15 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, SearchIcon, SquarePenIcon } from 'lucide-react';
 import { Group, GroupSeparator, GroupText } from '@/components/ui/group';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
-import { useAdminSourceListings } from '@/hooks/dataFetching';
-import { Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogPanel, DialogPopup, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useAdminSourceListings, useLocations, useSourceCategories, useSourceTags } from '@/hooks/dataFetching';
+import { Dialog, DialogClose, DialogFooter, DialogHeader, DialogPanel, DialogPopup, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { EditSourceForm } from '@/components/admin/editSourceForm';
 
 export default function SourceView() {
     const { data: sources, isLoading: sourcesLoading } = useAdminSourceListings();
+    const { data: categories } = useSourceCategories();
+    const { data: tags } = useSourceTags();
+    const { data: locations } = useLocations();
 
     const columnHelper = createColumnHelper<AdminSourceListing>();
 
@@ -50,6 +53,64 @@ export default function SourceView() {
                         {info.getValue()}
                     </div>
                 ),
+            }),
+            columnHelper.accessor('category_id', {
+                header: 'Kategorija',
+                cell: info => {
+                    const categoryId = info.getValue();
+
+                    const categoryName = categories?.find(cat => cat.id === categoryId)?.name || "—";
+
+                    return <span>{categoryName}</span>;
+                },
+            }),
+            columnHelper.accessor('location_ids', {
+                header: 'Vietovardžiai',
+                cell: info => {
+                    const locationIds = info.getValue();
+
+                    if (!locationIds || !locations) return <span>—</span>;
+
+                    const locationNames = locationIds
+                        .map(id => locations.find(loc => loc.id === id)?.name)
+                        .filter(Boolean);
+
+                    return (
+                        <div className="flex flex-wrap gap-1">
+                            {locationNames.length > 0 ? locationNames.map((name, idx) => (
+                                <span
+                                    key={idx}
+                                    className="px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800"
+                                >
+                                    {name}
+                                </span>
+                            )) : <span>—</span>}
+                        </div>
+                    );
+                },
+            }),
+            columnHelper.accessor('tag_ids', {
+                header: 'Žymos',
+                cell: info => {
+                    const tagIds = info.getValue();
+
+                    const tagNames = tagIds && tags
+                        ? tagIds.map(id => tags.find(tag => tag.id == id)?.name).filter(Boolean)
+                        : [];
+
+                    return (
+                        <div className="flex flex-wrap gap-1">
+                            {tagNames.length > 0 ? tagNames.map((name, idx) => (
+                                <span
+                                    key={idx}
+                                    className="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-800"
+                                >
+                                    {name}
+                                </span>
+                            )) : <span>—</span>}
+                        </div>
+                    );
+                },
             }),
             columnHelper.accessor('state', {
                 header: '',
